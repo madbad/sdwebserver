@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- <!DOCTYPE params SYSTEM "networkreply_params.dtd"> -->
+<serverReply>
+	<date validateAs="$unixDateTime">12324564</date>
+	<processingTime validateAs="$timeLapse"></processingTime>
+	<request validateAs="$null">
+		<url validateAs="$url"></url>
+		<date validateAs="$unixDateTime"></date>
+		<method validateAs="post|get"></method>
+	</request>
+	<error validateAs="$bolean">
+		<code validateAs="$number"></code>
+		<description validateAs="$commonChars"></description>
+	</error>
+	<success validateAs="$bolean">
+		<hostlist validateAs="$null">
+			<host validateAs="$null">
+				<id validateAs="$ip"></id>
+				<name validateAs="$commonChars"></name>
+				<ip validateAs="$ip"></ip>
+				<location validateAs="$country"></location>
+				<registrationDate validateAs="$unixDateTime"></registrationDate>
+				<lastseenDate validateAs="$unixDateTime"></lastseenDate>
+				<sdVersion validateAs="$commonChars"></sdVersion>
+				<race>
+					<status validateAs="waiting|racing|ended"></status>
+					<currentLap validateAs="$integer"></currentLap>
+					<currentTime validateAs="$timeLapse"></currentTime>
+					<players validateAs="$integer"></players>
+				</race>
+				<config validateAs="$null">
+					<maxPlayers validateAs="$integer"></maxPlayers>
+					<category validateAs="$carCategory"></category>
+					<track validateAs="$track"></track>
+					<duration validateAs="$null">
+						<laps validateAs="$integer"></laps>
+						<time validateAs="$timeLapse"></time>
+					</duration>			
+				</config>
+			</host>
+		</hostlist>
+	</success>
+</serveRreply>
