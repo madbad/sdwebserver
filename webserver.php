@@ -20,16 +20,17 @@ $myDb->query('
 ');
 */
 
-//$myXml=simplexml_load_file ('./xml/hostlist.xml');
+$myXml=simplexml_load_file ('./xml/hostlist_reply.xml');
 
 
 
 //var_dump($myXml);
 
 //echo $myXml->date["validateAs"];
+header ("Content-Type:text/xml");  
 echo $myXml->asXML();
 
-
+/*
 function traverseXmlObj($xml){
 	foreach($xml->children() as $elementName => $child){
 		echo $elementName;
@@ -37,4 +38,5 @@ function traverseXmlObj($xml){
 }
 echo 'test';
 traverseXmlObj($myXml);
+*/
 ?>

@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE serverReply [
+<!ENTITY host SYSTEM "./host.xml">
+
+<!ELEMENT serverReply (webServerVersion,date,error,success)>
+	<!ELEMENT webServerVersion (#PCDATA)>
+		<!ATTLIST webServerVersion validateAs CDATA #IMPLIED>
+	<!ELEMENT date (#PCDATA)>
+		<!ATTLIST date validateAs CDATA #IMPLIED>
+	<!ELEMENT error (code,description)>
+		<!ATTLIST error validateAs CDATA #IMPLIED>
+		<!ELEMENT code (#PCDATA)>
+			<!ATTLIST code validateAs CDATA #IMPLIED>
+		<!ELEMENT description (#PCDATA)>
+				<!ATTLIST description validateAs CDATA #IMPLIED>
+	<!ELEMENT success (hostlist)>
+		<!ATTLIST success validateAs CDATA #IMPLIED>
+		<!ELEMENT hostlist (#PCDATA)>
+			<!ATTLIST hostlist validateAs CDATA #IMPLIED>
+]>
+<serverReply>
+	<webServerVersion validateAs="$integer">1</webServerVersion>
+	<date validateAs="$unixDateTime">12324564</date>
+	<error validateAs="$bolean">
+		<code validateAs="$number"></code>
+		<description validateAs="$commonChars"></description>
+	</error>
+	<success validateAs="$bolean">
+		<hostlist validateAs="$null">
+			&host;
+		</hostlist>
+	</success>
+</serverReply>
