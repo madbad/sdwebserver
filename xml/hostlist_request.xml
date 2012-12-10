@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <clientRequest>
 	<webServerVersion>1</webServerVersion>
-	<date validateAs="$unixDateTime">12324564</date>
-	<requestType>$file_name</requestType>
+	<date validateAs="unixDateTime"></date>
+	<requestType>file_name</requestType>
 	<options>
-		<howMany></howMany>
+		<listLenght  validateAs="integer"></listLenght>
 		<filterBy>
 			<property> <!-- as host properties -->
-				<operator validateAs="$operator"></operator>
-				<value validateAs="$operator"></value>
+				<operator validateAs="comparisonOperator"></operator>
+				<value validateAs="operator"></value>
 			</property>
 		</filterBy>
 		<orderBy>
 			<property> <!-- as host properties -->
-				<mode validateAs="ascending|descending"></mode>
+				<mode validateAs="orderingType"></mode>
 			</property>
 		</orderBy>
 	</options>

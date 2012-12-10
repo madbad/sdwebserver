@@ -1,33 +1,36 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE serverReply [
-<!ENTITY host SYSTEM "./host.xml">
-
-<!ELEMENT serverReply (webServerVersion,date,error,success)>
-	<!ELEMENT webServerVersion (#PCDATA)>
-		<!ATTLIST webServerVersion validateAs CDATA #IMPLIED>
-	<!ELEMENT date (#PCDATA)>
-		<!ATTLIST date validateAs CDATA #IMPLIED>
-	<!ELEMENT error (code,description)>
-		<!ATTLIST error validateAs CDATA #IMPLIED>
-		<!ELEMENT code (#PCDATA)>
-			<!ATTLIST code validateAs CDATA #IMPLIED>
-		<!ELEMENT description (#PCDATA)>
-				<!ATTLIST description validateAs CDATA #IMPLIED>
-	<!ELEMENT success (hostlist)>
-		<!ATTLIST success validateAs CDATA #IMPLIED>
-		<!ELEMENT hostlist (#PCDATA)>
-			<!ATTLIST hostlist validateAs CDATA #IMPLIED>
-]>
 <serverReply>
-	<webServerVersion validateAs="$integer">1</webServerVersion>
-	<date validateAs="$unixDateTime">12324564</date>
-	<error validateAs="$bolean">
-		<code validateAs="$number"></code>
-		<description validateAs="$commonChars"></description>
+	<webServerVersion validateAs="integer">115</webServerVersion>
+	<date validateAs="unixDateTime">12324564</date>
+	<error validateAs="bolean">false
+		<code validateAs="integer"></code>
+		<description validateAs="commonChars"></description>
 	</error>
-	<success validateAs="$bolean">
-		<hostlist validateAs="$null">
-			&host;
+	<success validateAs="bolean">true
+		<hostlist validateAs="null">
+			<host validateAs="null">
+				<!-- host data -->
+				<id validateAs="commonCharsAndNumbers">myid5</id>
+				<name validateAs="commonCharsAndNumbers">MadTheBad82</name>
+				<ip validateAs="ip">192.168.0.1</ip>
+				<location validateAs="country">Italy</location>
+				<sdVersion validateAs="commonChars">2.1</sdVersion>
+				<operatingSystem validateAs="operatingSystems">linux</operatingSystem>
+				<!-- -->
+				<registrationDate validateAs="unixDateTime">123152454</registrationDate>
+				<lastSeenDate validateAs="unixDateTime">12341561212</lastSeenDate>
+				<!-- race data -->
+				<status validateAs="raceStatus">waiting</status>
+				<currentLap validateAs="integer">10-</currentLap>
+				<currentTime validateAs="seconds">11015</currentTime>
+				<players validateAs="integer">900</players>
+				<!-- config data -->
+				<maxNumPlayers validateAs="integer">30</maxNumPlayers>
+				<category validateAs="carCategory">Rally</category>
+				<track validateAs="track">Salty</track>
+				<raceLenghtType validateAs="raceLenghtType">time</raceLenghtType>
+				<raceLenghtValue validateAs="integer">10000</raceLenghtValue>
+			</host>
 		</hostlist>
 	</success>
 </serverReply>

@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<host validateAs="$null">
+<host validateAs="null">
 	<!-- host data -->
-	<id validateAs="$ip"></id>
-	<name validateAs="$commonChars">--</name>
-	<ip validateAs="$ip"></ip>
-	<location validateAs="$country"></location>
-	<sdVersion validateAs="$commonChars"></sdVersion>
-	<operatingSystem validateAs="$operatingSystems"></operatingSystem>
+	<id validateAs="ip"></id>
+	<name validateAs="commonChars">--</name>
+	<ip validateAs="ip"></ip>
+	<location validateAs="country"></location>
+	<sdVersion validateAs="commonChars"></sdVersion>
+	<operatingSystem validateAs="operatingSystems"></operatingSystem>
 	<!-- -->
-	<registrationDate validateAs="$unixDateTime"></registrationDate>
-	<lastSeenDate validateAs="$unixDateTime"></lastSeenDate>
+	<registrationDate validateAs="unixDateTime"></registrationDate>
+	<lastSeenDate validateAs="unixDateTime"></lastSeenDate>
 	<!-- race data -->
 	<status validateAs="waiting|racing|ended"></status>
-	<currentLap validateAs="$integer"></currentLap>
-	<currentTime validateAs="$timeLapse"></currentTime>
-	<players validateAs="$integer"></players>
+	<currentLap validateAs="integer"></currentLap>
+	<currentTime validateAs="timeLapse"></currentTime>
+	<players validateAs="integer"></players>
 	<!-- config data -->
-	<maxNumPlayers validateAs="$integer"></maxNumPlayers>
-	<category validateAs="$carCategory"></category>
-	<track validateAs="$track"></track>
+	<maxNumPlayers validateAs="integer"></maxNumPlayers>
+	<category validateAs="carCategory"></category>
+	<track validateAs="track"></track>
 	<racelenght validateAs="laps|time"></racelenght>
 </host>

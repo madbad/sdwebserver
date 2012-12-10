@@ -15,14 +15,14 @@ class DataBase
     public function connect() {
 
 		//connect to the host
-        $link = mysql_connect($this->host, $this->username, $this->password)
+		$link = mysql_connect($this->host, $this->username, $this->password)
 			or die('Could not connect to the host: ' . mysql_error());
 
 		//select the database
 		mysql_select_db($this->name) 
 			or die('Could not select the database: ' . mysql_error());
 
-    }
+	}
 
 	public function query(){
 		$result = mysql_query("SELECT * FROM test")
