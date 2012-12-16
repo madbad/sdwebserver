@@ -24,113 +24,66 @@ class DataBase
 
 	}
 
-	public function query(){
-		$result = mysql_query("SELECT * FROM test")
-			or die('Could not execute the query:  ' . mysql_error());  
+	public function query($query){
+		echo '<br>'.$query;
+		return mysql_query($query)
+			or die('Could not execute the query: ' . mysql_error());  
 	}
 
-	public function insert(){
+	public function insert($inserts, $table){
+		/*
+			$inserts is an array with key value pairs where $key=$fieldname $value=$fieldvalue
+			$table is the table name 
+		*/
+
+		//remove key from the list
+		unset($inserts['host_id']);
+
+
+		//
+		$values = array_map('mysql_real_escape_string', array_values($inserts));
+		$keys = array_keys($inserts);
+		$query='INSERT INTO `'.$table.'` (`'.implode('`,`', $keys).'`) VALUES (\''.implode('\',\'', $values).'\')';
+		return $this->query($query);
 	}
 
-	public function update(){
-		$result = mysql_query("SELECT * FROM test")
-			or die('Could not execute the query:  ' . mysql_error());  
+	public function update($updates, $table){
+		/*
+			$inserts is an array with key value pairs where $key=$fieldname $value=$fieldvalue
+			$table is the table name 
+		*/
+		$values = array_map('mysql_real_escape_string', array_values($updates));
+		$keys = array_keys($updates);
+		$query="UPDATE Persons SET Age=36 WHERE FirstName='Peter' AND LastName='Griffin'";
+		return $this->query($query);
 	}
 
 	public function remove(){
-		$result = mysql_query("SELECT * FROM test")
-			or die('Could not execute the query:  ' . mysql_error());  
+		$query='';
+		return $this->query($query);
 	}
-/*
-<?php
-function mysql_insert($table, $inserts) {
-    $values = array_map('mysql_real_escape_string', array_values($inserts));
-    $keys = array_keys($inserts);
-       
-    return mysql_query('INSERT INTO `'.$table.'` (`'.implode('`,`', $keys).'`) VALUES (\''.implode('\',\'', $values).'\')');
-}
-?>
-*/
 
+	public function hasTable($table){
+		if(mysql_num_rows(mysql_query("SHOW TABLES LIKE '".$table."'"))==1){
+			return true;
+		}else{
+			return false;
+		}
+	}
 
-
-
-/*
-
-<?php
-
- * If `ve made a fast way to
- * get a sql statement out of a array
- * Just give an array to the function with
- *  your Keys (sql) and the
- * values in the other array
- *
- * array('keys'=>array('key','key2','key3'),
-           'values'=>array(
-            array('test','test2','test3'),
-            array('best','best2','best3'),
-            array('nest','nest2','nest3'),
-             )
-           );
- *
- * returns:
- * insert:  "(`key`,`key2`,`key3`)VALUES ('test','test2','test3'), ('best','best2','best3'), ('nest','nest2','nest3')"
- * Update:  "SET `key`='test', `key2`='test2', `key3`='test3'"
- *
- *
-
-
-$params=array('keys'=>array('key','key2','key3'),
-           'values'=>array(
-            array('test','test2','test3'),
-            array('best','best2','best3'),
-            array('nest','nest2','nest3'),
-             )
-           );
-
-echo array2Sql($params,'insert');
-
-function array2Sql($params=array(),$mod='insert')
-{
-
-#make it uniform (for insert, if only an pure array given)
-if(!is_array($params['values']['0'])){
-     $new['values']['0']=$params['values'];
-     $params['values']= $new['values'];
-}
-
-switch($mod){
-
-     case'insert':
-      $vals=array();
-      $keys='(`'.join('`,`',$params['keys']).'`)';
-
-      foreach($params['values'] as $k=>$v){
-
-             $vals[]='(\''.join('\', \'',$v).'\')';
-
-      }
-           $vals=implode(',', $vals);
-
-      return $sql=$keys.'VALUES '.$vals;
-
-     case'update':
-      $sets=array();
-      $i=0;
-      foreach($params['values']['0'] as $k=>$v){
-          $sets[]='`'.$params['keys'][$i].'`=\''.$v.'\'';
-           $i++;
-      }
-       return $sql='SET '.implode(', ',$sets);
-
-     }
-     return false;
-
-}
-?>
-
-
-*/
-
+	public function createTable($table, $columns){
+		$query ="CREATE TABLE $table (";
+		foreach ($columns as $name=> $type){
+			if(preg_match('/(_id)$/', $name)){
+				$key=$name;
+				$query.="$name INT NOT NULL AUTO_INCREMENT,";
+			}else{
+				$query.="$name $type,";
+			}
+		}
+		$query.="PRIMARY KEY ($key))";
+		//$query=substr($query,0,-1).')';
+		$this->query($query);
+	}
 }
 ?>

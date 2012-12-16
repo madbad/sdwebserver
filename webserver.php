@@ -12,29 +12,21 @@ require_once './xml/validation.php';
 //intialize the logger
 $log = new Logger('./logs/webserver.log');
 
-/*
+//initialize the database
 $myDb=new DataBase($config->database);
-$myDb->query('
-	from: tablename
-	select: id,name,data
-	conditions:[
-		operator = and,
-		id = test,
-		data = bho,
-		ciro > me
-	]
-');
-*/
 
-/*
-$myXml=simplexml_load_file ('./xml/hostlist_reply.xml');
+//read the xml
+$xml=new MyXml(file_get_contents('./xml/host_register.xml'));
 
-//traverseXmlObj($myXml->success->hostlist->host);
-XmlValidate($myXml);
-*/
-$myXml=new MyXml(file_get_contents('./xml/hostlist_reply.xml'));
 
-//echo $myXml->success->hostlist[0]->validate();
-//echo $myXml->validate();
+
+//goto the real data
+$xmlData=$xml->request;
+
+//validate the data
+$xmlData->validate();
+
+//and save it to the database
+$xmlData->saveToDb();
 
 ?>
