@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE params SYSTEM "networkreply_params.dtd">
+<serverreply>
+	<status>success/error</status>
+	<date></date>
+	<processingtime></processingtime>
+	<request>
+		<url></url>
+		<date></date>
+		<method><method>
+	</request>
+	<error>
+		<code></code>
+		<description><description>
+	</error>
+	<success>
+		<hostlist>
+			<host>
+				<name></name>
+				<ip></ip>
+				<location></location>
+				<sdversion></sdversion>
+				<status>playing/waiting</status>
+				<registrationdate></registrationdate>
+				<lastseendate></lastseendate>
+				<config>
+					<players>
+						<max></max>
+						<current></current>
+					</players>
+					<category></category>
+					<track></track>
+					<duration>
+						<laps></laps>
+						<time></time>
+					</duration>			
+				</config>
+			</host>
+		</hostlist>
+	</success>
+<serverreply>
+
+
+
+
+
+
+
+

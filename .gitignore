@@ -1,0 +1,8 @@
+config/*
+img/tracks/*
+img/cars/*
+img/users/*
+data/*
+config.inc.php
+*.pyc
+*~

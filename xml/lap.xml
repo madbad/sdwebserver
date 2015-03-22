@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<content>
+	<webServerVersion validateAs="integer">115</webServerVersion>
+	<type>lap</type>
+	<date validateAs="unixDateTime">12324564</date>
+	<error validateAs="commonChars"></error>
+	<request>
+		<lap validateAs="null">
+			<id validateAs="commonCharsAndNumbers"></id>
+			<laptime validateAs="double"></laptime>
+			<sdVersion validateAs="commonChars">2.1</sdVersion>
+			<user validateAs="obj">
+				<id validateAs="commonCharsAndNumbers">20000</id>
+				<skill validateAs="integer">3</skill>
+				<ip validateAs="ip">192.168.0.1</ip>
+			</user>
+			<track validateAs="obj">
+				<name validateAs="trackName"></name>
+			</track>
+			<race validateAs="obj">
+				<type validateAs="commonChars"></type>
+			</race>
+			<car validateAs="obj">
+				<name validateAs="carName"></name>
+				<category validateAs="carCategory">Rally</category>
+				<fuel validateAs="integer"></fuel>
+			</car>
+		</lap>
+	</request>
+	<reply>
+		<message>
+		</message>
+	</reply>
+</content>

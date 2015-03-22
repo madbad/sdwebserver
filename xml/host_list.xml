@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<content>
+	<webServerVersion validateAs="integer">115</webServerVersion>
+	<type>host_list</type>
+	<date validateAs="unixDateTime">12324564</date>
+	<error validateAs="commonChars"></error>
+	<request>
+		<options>
+			<listLenght validateAs="integer"></listLenght>
+			<filterBy>
+				<property> <!-- as host properties -->
+					<operator validateAs="comparisonOperator"></operator>
+					<value validateAs="operator"></value>
+				</property>
+			</filterBy>
+			<orderBy>
+				<property> <!-- as host properties -->
+					<mode validateAs="orderingType"></mode>
+				</property>
+			</orderBy>
+		</options>
+	</request>
+	<reply>
+		<hostlist validateAs="null">
+			<host validateAs="null">
+				<!-- host data -->
+				<id validateAs="commonCharsAndNumbers"></id>
+				<ip validateAs="ip"></ip>
+				<name validateAs="commonCharsAndNumbers"></name>
+				<location validateAs="country"></location>
+				<sdVersion validateAs="commonChars"></sdVersion>
+				<operatingSystem validateAs="operatingSystems"></operatingSystem>
+				<!-- -->
+				<registrationDate validateAs="unixDateTime"></registrationDate>
+				<lastSeenDate validateAs="unixDateTime"></lastSeenDate>
+				<!-- race data -->
+				<status validateAs="raceStatus"></status>
+				<currentLap validateAs="integer"></currentLap>
+				<currentTime validateAs="seconds"></currentTime>
+				<players validateAs="integer"></players>
+				<!-- config data -->
+				<maxNumPlayers validateAs="integer"></maxNumPlayers>
+				<category validateAs="carCategory"></category>
+				<track validateAs="track"></track>
+				<raceLenghtType validateAs="raceLenghtType"></raceLenghtType>
+				<raceLenghtValue validateAs="integer"></raceLenghtValue>
+			</host>
+		</hostlist>
+	</reply>
+</content>

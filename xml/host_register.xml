@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<content>
+	<webServerVersion validateAs="integer">115</webServerVersion>
+	<type>host_register</type>
+	<date validateAs="unixDateTime">12324564</date>
+	<error validateAs="commonChars"></error>
+	<request>
+		<host validateAs="null">
+			<!-- host data -->
+			<id validateAs="commonCharsAndNumbers">1</id>
+			<ip validateAs="ip">192.168.0.1</ip>
+			<name validateAs="commonCharsAndNumbers">MadTheBad82</name>
+			<location validateAs="country">Italy</location>
+			<sdVersion validateAs="commonChars">2.1</sdVersion>
+			<operatingSystem validateAs="operatingSystems">linux</operatingSystem>
+			<!-- -->
+			<registrationDate validateAs="dateTime">123152454</registrationDate>
+			<lastSeenDate validateAs="dateTime">12341561212</lastSeenDate>
+			<!-- race data -->
+			<status validateAs="raceStatus">waiting</status>
+			<currentLap validateAs="integer">10</currentLap>
+			<currentTime validateAs="seconds">11015</currentTime>
+			<players validateAs="integer">900</players>
+			<!-- config data -->
+			<maxNumPlayers validateAs="integer">30</maxNumPlayers>
+			<category validateAs="carCategory">Rally</category>
+			<track validateAs="track">Salty</track>
+			<raceLenghtType validateAs="raceLenghtType">time</raceLenghtType>
+			<raceLenghtValue validateAs="integer">10000</raceLenghtValue>
+		</host>
+		<host validateAs="null">
+			<!-- host data -->
+			<id validateAs="commonCharsAndNumbers">20000</id>
+			<ip validateAs="ip">192.168.0.1</ip>
+			<name validateAs="commonCharsAndNumbers">MadTheBad82</name>
+			<location validateAs="country">Italy</location>
+			<sdVersion validateAs="commonChars">2.1</sdVersion>
+			<operatingSystem validateAs="operatingSystems">linux</operatingSystem>
+			<!-- -->
+			<registrationDate validateAs="dateTime">123152454</registrationDate>
+			<lastSeenDate validateAs="dateTime">12341561212</lastSeenDate>
+			<!-- race data -->
+			<status validateAs="raceStatus">waiting</status>
+			<currentLap validateAs="integer">10</currentLap>
+			<currentTime validateAs="seconds">11015</currentTime>
+			<players validateAs="integer">900</players>
+			<!-- config data -->
+			<maxNumPlayers validateAs="integer">30</maxNumPlayers>
+			<category validateAs="carCategory">Rally</category>
+			<track validateAs="track">Salty</track>
+			<raceLenghtType validateAs="raceLenghtType">time</raceLenghtType>
+			<raceLenghtValue validateAs="integer">10000</raceLenghtValue>
+		</host>
+	</request>
+	<reply>
+		<id></id>
+	</reply>
+</content>
