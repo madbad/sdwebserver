@@ -3,6 +3,7 @@ img/tracks/*
 img/cars/*
 img/users/*
 data/*
+logs/*
 config.inc.php
 *.pyc
 *~
