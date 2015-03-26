@@ -102,4 +102,49 @@ $carCategories=jsonTxtFileToObj("./data/carCategories.txt", 'CarCategory');
 $cars=jsonTxtFileToObj("./data/cars.txt", 'Car');
 $trackCategories=jsonTxtFileToObj("./data/trackCategories.txt", 'TrackCategory');
 $tracks=jsonTxtFileToObj("./data/tracks.txt", 'Track');
+
+###################################
+## 
+###################################
+function secondsToTime($seconds) {
+	/*
+    $dtF = new DateTime("@0");
+    $dtT = new DateTime("@$seconds");
+    return $dtF->diff($dtT)->format('%a d, %h hr, %i min, %s sec');
+    */
+	$date1 = new DateTime("@0");
+	$date2 = new DateTime("@$seconds");
+	$interval = $date1->diff($date2);
+	$str='';
+	$years=$interval->y;
+	$months=$interval->m;
+	$days=$interval->d;
+	$hours=$interval->h;
+	$minutes=$interval->i;
+
+	if($years > 0){
+		$str.= $years." years ";
+	}
+	if($months > 0){
+		$str.= $months." months ";
+	}
+	if($days > 0){
+		$str.= $days." days ";
+	}
+	if($hours > 0){
+		$str.= $hours." hours ";
+	}
+	if($minutes > 0){
+		$str.= $minutes." minutes ";
+	}
+	return $str;
+}
+###################################
+## 
+###################################
+function percentStr($smallvalue, $bigvalue) {
+	if($bigvalue==0){return '-%';}
+	$percent = round($smallvalue*100/$bigvalue,0);
+	return $percent.'%';
+}
 ?>

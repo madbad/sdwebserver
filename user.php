@@ -15,17 +15,6 @@ $log = new Logger('./logs/webserver.log');
 //initialize the database
 $myDb=new DataBase($config->database);
 
-function secondsToTime($seconds) {
-    $dtF = new DateTime("@0");
-    $dtT = new DateTime("@$seconds");
-    return $dtF->diff($dtT)->format('%a d, %h hr, %i min, %s sec');
-}
-function percentStr($smallvalue, $bigvalue) {
-	if($bigvalue==0){return '-%';}
-	$percent = round($smallvalue*100/$bigvalue,2);
-	return $percent.'%';
-}
-
 ###################################
 ## select user profile data
 ###################################
@@ -225,10 +214,22 @@ require_once './header.inc.php';
 				<tr>
 					<td>Time spent on the track:</td>
 					<td>
-						<?php echo secondsToTime(round($timeontrack['time'],0))?>
-						<br>Practicing: <?php echo secondsToTime(round($timeontrackPractice['time'],0))?>
-						<br>Qualifying: <?php echo secondsToTime(round($timeontrackQualify['time'],0))?>
-						<br>Racing: <?php echo secondsToTime(round($timeontrackRace['time'],0))?>
+						<?php 
+							echo secondsToTime(round($timeontrack['time'],0));
+						$P = percentStr($timeontrackPractice['time'],$timeontrack['time']);
+						$Q = percentStr($timeontrackQualify['time'],$timeontrack['time']);
+						$R = percentStr($timeontrackRace['time'],$timeontrack['time']);
+							echo "<br>
+							<table style='width:100%;height:1em;padding:0em;margin:0em;'>
+								<tr>
+									<td title='Practice $P' style='width:$P;background-color:grey;padding:0em;'></td>
+									<td title='Qualify $Q' style='width:$Q;background-color:orange;padding:0em;'></td>
+									<td title='Race $R' style='width:$R;background-color:green;padding:0em;'></td>
+								</tr>
+							</table>
+							";
+						?>
+
 					</td>
 				</tr>
 				<tr>
@@ -260,8 +261,7 @@ require_once './header.inc.php';
 					<td>
 						<?php 
 							if($mostusedcar){
-								echo $cars->$mostusedcar['car_id']->clickableName().'<br>';
-								echo $cars->$mostusedcar['car_id']->imgTag();
+								echo $cars->$mostusedcar['car_id']->clickableImgTag();
 							}
 						?>
 					</td>
@@ -271,8 +271,7 @@ require_once './header.inc.php';
 					<td>
 						<?php
 							if($mostusedtrack){
-								echo $tracks->$mostusedtrack['track_id']->name.'<br>';
-								echo $tracks->$mostusedtrack['track_id']->imgTag();
+								echo $tracks->$mostusedtrack['track_id']->clickableImgTag();
 							}
 						?>
 					</td>
@@ -290,9 +289,7 @@ require_once './header.inc.php';
 		<th>Started on</th>
 		<th>Track</th>
 		<th>Car</th>
-		<th>Start Position</th>
-		<th>Finish Position</th>
-		<th>Race Type</th>
+		<th>Finish Position<br>(gain/loss)</th>
 	</tr>
 <?php
 
@@ -300,18 +297,23 @@ foreach ($races as $race){
 	echo "
 		<tr>
 		<td>$race[id]</td>
-		<td>$race[timestamp]</td>
-		<td>".$tracks->$race['track_id']->clickableName()."</td>
-		<td>".$cars->$race['car_id']->clickableName()."</td>
-		<td>$race[startposition]</td>
+		<td>".date_format(new DateTime($race['timestamp']), 'd M Y @ H:i')."</td>
+		<td>".$tracks->$race['track_id']->clickableImgTag()."</td>
+		<td>".$cars->$race['car_id']->clickableImgTag()."</td>
 		<td>";
-		if($race['endposition']>0){echo $race['endposition'];}else{echo 'Retired/Not finished';}
-		echo "</td>
-		<td>";
-		echo racetype($race['type']);
-		echo"</td>
-		</tr>
-		";
+		if($race['endposition']>0){
+			echo $race['endposition'];
+			$gain = $race['startposition']-$race['endposition'];
+			if($gain>=0){
+				echo " <sup style='color:green;'>(+$gain)</sup>";
+			}else{
+				echo "<sup style='color:red;'>($gain)</sup>";			
+			}
+
+		}else{
+			echo 'Retired/Not finished';
+		}
+	echo "</td></tr>";
 }
 ?>
 </table>
@@ -358,6 +360,21 @@ if($laps){
 ?>
 
 </table>
+<?php
+/*
+foreach ($trackCategories as $trackCategory){
+	//print_r($trackCategory);
+	
+	echo "\n<br><h1>".$trackCategory->name."</h1>";
+	foreach ($trackCategory->tracks as $trackId){
+		$track = $tracks->$trackId;
+		echo "\n".$track->imgTag()."";
+	}
+	
+} 
+*/
+?>
+
 
 <?php
 require_once './footer.inc.php';

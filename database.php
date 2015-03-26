@@ -211,11 +211,18 @@ class Track
 		return $this->name.$this->img;
 	}
 	public function imgTag() {
-		return "<img width='300' src='".$this->img."' alt='track outline'>";
+		return "<img width='80' src='".$this->img."' alt='".$this->name."' title='".$this->name."'>";
 
 	}
 	public function clickableName() {
-		return "<a href='./track.php?id=".$this->id."'>".$this->name."</a>";
+		return $this->linkTag($this->name);
+
+	}
+	public function clickableImgTag() {
+		return $this->linkTag($this->imgTag());
+	}
+	public function linkTag($content) {
+		return "<a href='./track.php?id=".$this->id."'>".$content."</a>";
 
 	}
 }
@@ -239,13 +246,22 @@ class Car
 		return $this->name.$this->img;
 	}
 	public function imgTag() {
-		return "<img width='300' src='".$this->img."'  class='carPreview' alt='car preview'>";
+//		return "<img width='300' src='".$this->img."'  class='carPreview' alt='car preview'>";
+		return "<img width='120' src='".$this->img."' alt='car preview'  title='".$this->name."'>";
 
 	}
 	public function clickableName() {
-		return "<a href='./car.php?id=".$this->id."'>".$this->name."</a>";
+		return $this->linkTag($this->name);
 
 	}
+	public function clickableImgTag() {
+		return $this->linkTag($this->imgTag());
+	}
+	public function linkTag($content) {
+		return "<a href='./car.php?id=".$this->id."'>".$content."</a>";
+
+	}
+
 }
 ########################################################
 
@@ -264,7 +280,7 @@ class CarCategory
 
 class TrackCategory
 {
-	function CarCategory($category){
+	function TrackCategory($category){
 		$this->import($category);
 	}
     public function import($properties){    

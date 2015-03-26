@@ -314,8 +314,11 @@ h1{
 	padding:0.5em;
 }
 .carPreview{
-padding:0.3em;
-background-color:white;
-box-shadow:0 0 15px 5px #DADADA;
+	padding:0.3em;
+	background-color:white;
+	box-shadow:0 0 15px 5px #DADADA;
 	transform: rotate(-7deg);
+}
+sup{
+font-size:0.4em;
 }
