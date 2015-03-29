@@ -34,7 +34,7 @@ foreach ($users as $user){
 	echo "\n\t\t<tr>";
 	echo "\n\t\t\t<td>".$myuser->getLink()."</td>";
 	echo "\n\t\t\t<td>".$myuser->getSmallFlagImg()."</td>";
-	echo "\n\t\t\t<td>".$myuser->registrationdate."</td>";
+	echo "\n\t\t\t<td>".date_format(new DateTime($myuser->registrationdate), 'd M Y @ H:i')."</td>";
 
 if($myuser->sessiontimestamp>0){
 	$date1 = new DateTime("");
