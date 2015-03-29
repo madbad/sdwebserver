@@ -94,7 +94,7 @@ $query="
 select COUNT(*) as counts
   from races
   where 
-  where user_id=$user[id]
+  user_id=$user[id]
   and type= $RACETYPE->QUALIFY";
 $qualifiescount = $myDb->customSelect($query);
 $qualifiescount = $qualifiescount[0]['counts'];
@@ -147,10 +147,13 @@ SELECT sum(A.laptime) as time
   FROM laps A
 INNER
   JOIN races B
-	ON B.user_id = $user[id]
+	ON A.race_id = B.id
+WHERE
+	B.user_id=$user[id]
 ";
 
 $timeontrack = $myDb->customSelect($query);
+//print_t($timeontrack);
 $timeontrack = $timeontrack[0];
 ###################################
 ## time on track practice
@@ -160,8 +163,10 @@ SELECT sum(A.laptime) as time
   FROM laps A
 INNER
   JOIN races B
-    ON B.type = ".$RACETYPE->PRACTICE."
-    AND B.user_id = $user[id]
+	ON A.race_id = B.id
+WHERE
+	B.user_id=$user[id]
+	AND B.type = ".$RACETYPE->PRACTICE."
 ";
 $timeontrackPractice = $myDb->customSelect($query);
 $timeontrackPractice = $timeontrackPractice[0];
@@ -173,8 +178,10 @@ SELECT sum(A.laptime) as time
   FROM laps A
 INNER
   JOIN races B
-    ON B.type = ".$RACETYPE->QUALIFY."
-    AND B.user_id = $user[id]
+	ON A.race_id = B.id
+WHERE
+	B.user_id=$user[id]
+	AND B.type = ".$RACETYPE->QUALIFY."
 ";
 $timeontrackQualify = $myDb->customSelect($query);
 $timeontrackQualify = $timeontrackQualify[0];
@@ -186,8 +193,10 @@ SELECT sum(A.laptime) as time
   FROM laps A
 INNER
   JOIN races B
-    ON B.type = ".$RACETYPE->RACE."
-    AND B.user_id = $user[id]
+	ON A.race_id = B.id
+WHERE
+	B.user_id=$user[id]
+	AND B.type = ".$RACETYPE->RACE."
 ";
 $timeontrackRace = $myDb->customSelect($query);
 $timeontrackRace = $timeontrackRace[0];
@@ -216,9 +225,9 @@ require_once './header.inc.php';
 					<td>
 						<?php 
 							echo secondsToTime(round($timeontrack['time'],0));
-						$P = percentStr($timeontrackPractice['time'],$timeontrack['time']);
-						$Q = percentStr($timeontrackQualify['time'],$timeontrack['time']);
-						$R = percentStr($timeontrackRace['time'],$timeontrack['time']);
+							$P = percentStr($timeontrackPractice['time'],$timeontrack['time']);
+							$Q = percentStr($timeontrackQualify['time'],$timeontrack['time']);
+							$R = percentStr($timeontrackRace['time'],$timeontrack['time']);
 							echo "<br>
 							<table style='width:100%;height:1em;padding:0em;margin:0em;'>
 								<tr>
@@ -336,13 +345,14 @@ select *
 ";
 $laps = $myDb->customSelect($query);
 ?>
-<h1>Laps from the last race</h1>
+<h1>Laps from the last session (practice, qualify or race)</h1>
 <table width="98%">
 	<tr>
 		<th>Id</th>
 		<th>Laptime</th>
 		<th>Fuel</th>
 		<th>Position</th>
+		<th>Setup File</th>		
 	</tr>
 <?php
 if($laps){
@@ -353,6 +363,7 @@ if($laps){
 			<td>$lap[laptime]</td>
 			<td>$lap[fuel]</td>
 			<td>$lap[position]</td>
+			<td><a href='./downloadsetup.php?id=$lap[id]' download='car-setup.xml'>Setup</a></td>
 			</tr>
 			";
 	}
