@@ -262,7 +262,7 @@ require_once './header.inc.php';
 					<td><?php echo count($racespodium).' ('.$racespodiumpercent.')' ?></td>
 				</tr>
 				<tr>
-					<td>Retired/Not finisched:</td>
+					<td>Retired / Not finished </td>
 					<td><?php echo count($racesretired).' ('.$racesretiredpercent.')' ?></td>
 				</tr>
 				<tr>
