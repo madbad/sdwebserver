@@ -15,29 +15,70 @@ $log = new Logger('./logs/webserver.log');
 //initialize the database
 $myDb=new DataBase($config->database);
 
+// select interested period
+$backto=time()-(7*24*60*60);
+
+
 //print the header for the page
 require_once './header.inc.php';
+
+
+//select the category to display
+if (array_key_exists('cat', $_GET)){
+	$carCatId=$_GET['cat'];
+}
+
 ?>
 <table class="fullPage"><tr><td class="verticalMenu" style="width: 15em;">
 	<b>Category selection</b>:
 	<?php
-		$firstRun = true;
-		foreach ($carCategories as $carCatId => $carCategory){
-			if($firstRun){
-				$defaultCategoryId= $carCatId;
-			}
-			echo "\n<a href='?cat=".$carCatId."'>".$carCategory->name."</a>";
+		/*################################
+		  ## generate the car category selection menu
+		  ################################
+		 */
+		foreach ($carCategories as $id => $category){
+			//if the category contain no cars we do no consider it
+			//todo: should we display only officially released ones?
+			if(count($category->cars) > 0){
+				global $carCatId;
+				//if no category has been chosen by the user, used the first valid (non empty) one
+				if($carCatId==''){
+					$carCatId= $id;
+				}
+				
+				//set a splecial class for the menu item that represent the currently selected class
+				if($carCatId==$id){
+					$class='class="selected"';
+				}else{
+					$class='';
+				}
+				echo "\n<a href='?cat=".$id."' $class>".$category->name."</a>";
+			}			
+		}
+		
+
+		/*################################
+		  ## generate a string that find all cars id of this carCategory
+		  ################################
+		 */
+
+		$carsql='';
+		foreach ($carCategories->$carCatId->cars as $car){
+			$carsql.=" OR B.car_id='$car'";
+		}
+
+		$carsql=substr($carsql, 4); //remove the first " OR "
+
+		//UGLY: there is some category that have no car assigned so create a fake $carsql for them
+		//to prevent errors in the generated queries
+		if($carsql==''){
+			$carsql=" B.car_id='NonExistentCarIdFindThisIfYouCan'";
 		}
 	?>
 </td>
 <td>
 	<h1>
 		<?php
-			if (array_key_exists('cat', $_GET)){
-				$carCatId=$_GET['cat'];
-			}else{
-				$carCatId=$defaultCategoryId;
-			}
 			 echo $carCategories->$carCatId->name;
 		 ?>
 	</h1>
@@ -53,23 +94,22 @@ require_once './header.inc.php';
 			<td>Pilot</td><td>Races</td>
 		</tr>
 		<?php
-			$carsql='';
-			foreach ($carCategories->$carCatId->cars as $car){
-				$carsql.=" OR car_id='$car'";
-			}
-			$carsql=substr($carsql, 4); //remove the fiirst " OR "
-
-			$backto=time()-(7*24*60*60);
+			/*
+			################################
+			## MOST ACTIVE USER OF THIS CATEGORY BASED ON LAPS RUN
+			## WITH A CAR OF THIS CATEGORY
+			################################
+			*/
 			$query="
-				SELECT user_id, COUNT(*) as count
-				FROM races
-				WHERE UNIX_TIMESTAMP(timestamp) > $backto
+				SELECT B.user_id, COUNT(*) as count
+				FROM races B
+				WHERE UNIX_TIMESTAMP(B.timestamp) > $backto
 				AND $carsql
-				GROUP BY user_id
+				GROUP BY B.user_id
 				ORDER BY COUNT(*) DESC";
 
 			$result = $myDb->customSelect($query);
-			
+	
 			if($result){
 				foreach ($result as $race){
 					$user =new User($race['user_id']);
@@ -83,46 +123,49 @@ require_once './header.inc.php';
 	<table class="fullPage">
 		<thead>
 			<tr>
-				<th colspan="3">Bests laps<br><small>In the last 7 days</small></th>
+				<th colspan="4">Bests lap for each track<br><small>In the last 7 days</small></th>
 			</tr>
 		</thead>
 		<tbody>
 		<tr>
-			<td>Track</td><td>Pilot</td><td>Laptime</td>
+			<td>Track</td><td>Pilot</td><td>Car</td><td>Laptime</td>
 		</tr>
 		<?php
-			//select the races grouped by track
-			$backto=time()-(7*24*60*60);
-			$query="
-				SELECT track_id, GROUP_CONCAT(id) as raceids
-				FROM races
-				WHERE UNIX_TIMESTAMP(timestamp) > $backto
-				AND $carsql
-				GROUP BY track_id";
-			$myraces = $myDb->customSelect($query);
+			/*
+			################################
+			## SELECT THE BEST LAPS FOR EACH TRACK
+			## WITH A CAR OFT HIS CATEGORY
+			################################
+			*/
 
-			//select all the laps that are about this track
-			foreach ($myraces as $myrace){
-				$track = $myrace['track_id'];
-				$bestlaps[$track]='';
-				$query="
-					SELECT race_id, laptime, id, MIN(laptime) as bestlap
-					FROM laps
-					WHERE id = ".implode(' or id = ',explode(',',$myrace['raceids']))."
-					AND UNIX_TIMESTAMP(timestamp) > $backto";
-				$mylap = $myDb->customSelect($query);
-				$mylap = $mylap[0];
-				if($mylap['race_id']!=''){
-					$query="
-						SELECT *
-						FROM races
-						WHERE 
-						id =".$mylap['race_id'] ;
-					$myracelap = $myDb->customSelect($query);
-					$myracelap = $myracelap[0];
-					$user=new User($myracelap['user_id']);
-					echo "<tr><td>".$tracks->$myrace['track_id']->clickableName()."</td><td>".$user->getLink()."</td><td>$mylap[bestlap]</td></tr>";
-				}
+			$query="
+			SELECT B.track_id, B.car_id, B.user_id, min(A.laptime) as bestlap
+			  FROM laps A
+			INNER
+			  JOIN races B
+				ON A.race_id = B.id
+			WHERE
+				UNIX_TIMESTAMP(B.timestamp) > $backto
+				AND $carsql
+			GROUP BY
+				B.track_id
+			";
+			$mylaps = $myDb->customSelect($query);
+			foreach ($mylaps as $mylap){
+				$user=new User($mylap['user_id']);
+				echo "<tr>";
+				echo "<td>";
+				echo $tracks->$mylap['track_id']->clickableName();
+				echo "</td>";
+				echo "<td>";
+				echo $user->getLink();
+				echo "</td>";
+				echo "<td>";
+				echo $cars->$mylap['car_id']->clickableName();
+				echo "</td>";
+				echo "<td>";
+				echo $mylap['bestlap'];
+				echo "</td></tr>";
 			}
 		?>
 		</tbody>
@@ -139,13 +182,12 @@ require_once './header.inc.php';
 			<td>Track</td><td>Races</td>
 		</tr>
 		<?php
-			$backto=time()-(7*24*60*60);
 			$query="
 				SELECT track_id, COUNT(*) as count
-				FROM races
+				FROM races B
 				WHERE UNIX_TIMESTAMP(timestamp) > $backto
 				AND $carsql
-				GROUP BY track_id
+				GROUP BY B.track_id
 				ORDER BY COUNT(*) DESC";
 			$result = $myDb->customSelect($query);
 			if($result){
@@ -168,13 +210,12 @@ require_once './header.inc.php';
 			<td>Car</td><td>Races</td>
 		</tr>
 		<?php
-			$backto=time()-(7*24*60*60);
 			$query="
 				SELECT car_id, COUNT(*) as count
-				FROM races
+				FROM races B
 				WHERE UNIX_TIMESTAMP(timestamp) > $backto
 				AND $carsql
-				GROUP BY car_id
+				GROUP BY B.car_id
 				ORDER BY COUNT(*) DESC";
 
 			$result = $myDb->customSelect($query);
