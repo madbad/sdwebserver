@@ -123,12 +123,12 @@ if (array_key_exists('cat', $_GET)){
 	<table class="fullPage">
 		<thead>
 			<tr>
-				<th colspan="4">Bests lap for each track<br><small>In the last 7 days</small></th>
+				<th colspan="5">Bests lap for each track<br><small>In the last 7 days</small></th>
 			</tr>
 		</thead>
 		<tbody>
 		<tr>
-			<td>Track</td><td>Pilot</td><td>Car</td><td>Laptime</td>
+			<td>Track</td><td>Pilot</td><td>Car</td><td>Laptime</td><td>Weather</td>
 		</tr>
 		<?php
 			/*
@@ -139,7 +139,7 @@ if (array_key_exists('cat', $_GET)){
 			*/
 
 			$query="
-			SELECT B.track_id, B.car_id, B.user_id, min(A.laptime) as bestlap
+			SELECT B.track_id, B.car_id, B.user_id, A.wettness, min(A.laptime) as bestlap
 			  FROM laps A
 			INNER
 			  JOIN races B
@@ -148,7 +148,8 @@ if (array_key_exists('cat', $_GET)){
 				UNIX_TIMESTAMP(B.timestamp) > $backto
 				AND $carsql
 			GROUP BY
-				B.track_id
+				B.track_id,
+				A.wettness
 			";
 			$mylaps = $myDb->customSelect($query);
 			foreach ($mylaps as $mylap){
@@ -165,6 +166,9 @@ if (array_key_exists('cat', $_GET)){
 				echo "</td>";
 				echo "<td>";
 				echo $mylap['bestlap'];
+				echo "</td>";	
+				echo "<td>";
+				echo weatherTag($mylap['wettness']);
 				echo "</td></tr>";
 			}
 		?>

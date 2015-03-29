@@ -147,4 +147,24 @@ function percentStr($smallvalue, $bigvalue) {
 	$percent = round($smallvalue*100/$bigvalue,0);
 	return $percent.'%';
 }
+
+###################################
+## 
+###################################
+function weatherTag($value) {
+	switch($value){
+	case 0:
+		return '<i class="wi wi-day-sunny"></i>';
+		break;
+	case 1:
+		return '<i class="wi wi-rain"></i>';
+		break;
+	case 2:
+		return '<i class="wi wi-rain"></i>';
+		break;
+	case 3:
+		return '<i class="wi wi-rain"></i>';
+		break;		
+	}
+}
 ?>

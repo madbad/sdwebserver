@@ -352,6 +352,7 @@ $laps = $myDb->customSelect($query);
 		<th>Laptime</th>
 		<th>Fuel</th>
 		<th>Position</th>
+		<th>Weather</th>		
 		<th>Setup File</th>		
 	</tr>
 <?php
@@ -363,6 +364,7 @@ if($laps){
 			<td>$lap[laptime]</td>
 			<td>$lap[fuel]</td>
 			<td>$lap[position]</td>
+			<td>".weatherTag($lap['wettness'])."</td>
 			<td><a href='./downloadsetup.php?id=$lap[id]' download='car-setup.xml'>Setup</a></td>
 			</tr>
 			";

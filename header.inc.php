@@ -6,6 +6,8 @@
 
 	<title>Speed-Dreams stats</title>
 	<link rel="stylesheet" type="text/css" href="style.css" />
+	<link rel="stylesheet" type="text/css" href="./font/weather-icons.css" />
+	
 	<!--
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 	<script src="http://code.highcharts.com/highcharts.js"></script>
@@ -28,3 +30,4 @@
 		<li><a href="./register.php">Register</a></li>
 	</ul>
 	<br><div class="warning">The site is still a stub (work in progess). <br>Remember that any recordered data will probably be deletted during further development!</div>
+
