@@ -35,11 +35,11 @@ require_once './header.inc.php';
 			<table>
 				<tr>
 					<td>Category</td>
-					<td><?php echo $car->category; ?>Category</td>
+					<td><?php echo $car->category; ?></td>
 				</tr>
 				<tr>
 					<td>Prewiev</td>
-					<td><?php echo $car->imgTag(); ?>Category</td>
+					<td><?php echo $car->imgTag(); ?></td>
 				</tr>
 			</table>
 		</td>

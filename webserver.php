@@ -682,13 +682,160 @@ $xml=xmlObj($_POST['data']);
 //validate the data
 //$xmlData->validate();
 
+/*
+<?xml version="1.0" encoding="UTF-8"?>
+<params name="webServerReply">
+	<section name="content">
+		<attnum name="webServerVersion" val="0.1"/>
+		<attnum name="date" val="12324564"/>
+		<attstr name="error" val=""/>
+		<section name="reply">
+			<section name="races">
+				<attnum name="id" val="'.$conditions->id.'"/>
+			</section>
+		</section>
+	</section>
+</params>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<params name="webServerReply">
+	<section name="content">
+		<attnum name="webServerVersion" val="0.1"/>
+		<attnum name="date" val="12324564"/>
+		<attstr name="error" val=""/>
+		<section name="reply">
+			<section name="messages">
+				<attnum name="number" val="1"/>
+				<attstr name="message0" val="msgserver"/>
+			</section>
+			<section name="races">
+				<attnum name="id" val="'.$myDb->lastInsertId.'"/>
+			</section>
+		</section>
+	</section>
+</params>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<params name="webServerReply">
+	<section name="content">
+		<attnum name="webServerVersion" val="0.1"/>
+		<attstr name="type" val="races"/>
+		<attnum name="date" val="12324564"/>
+		<attstr name="error" val=""/>
+		<section name="reply">
+			<section name="laps">
+				<attnum name="id" val="'.$myDb->lastInsertId.'"/>
+			</section>
+			<section name="messages">
+				<attnum name="number" val="3"/>
+				<attstr name="message0" val="So you have\n a good lap on the go"/>
+				<attstr name="message1" val="good to kwno"/>
+				<attstr name="message2" val="best lap"/>
+			</section>
+		</section>
+	</section>
+</params>
+				
+<?xml version="1.0" encoding="UTF-8"?>
+<params name="webServerReply">
+	<section name="content">
+		<attnum name="webServerVersion" val="0.1"/>
+		<attstr name="type" val="races"/>
+		<attnum name="date" val="12324564"/>
+		<attstr name="error" val=""/>
+		<section name="reply">
+			<section name="login">
+				<attstr name="sessionid" val="'.$user['sessionid'].'"/>
+				<attnum name="id" val="'. $user['id'].'"/>
+			</section>
+		</section>
+	</section>
+</params>
+
+
+$string='<?xml version="1.0" encoding="UTF-8"?>
+<params name="webServerReply">
+	<section name="content">
+		<attnum name="webServerVersion" val=""/>
+		<attstr name="type" val="races"/>
+		<attnum name="date" val="12324564"/>
+		<attstr name="error" val=""/>
+		<section name="reply">
+			<section name="login">
+				<attstr name="sessionid" val=""/>
+				<attnum name="id" val=""/>
+			</section>
+		</section>
+	</section>
+</params>';
+*/
+
+
+
+//setup the initial xml data for the reply
+$webserverversion= 1;
+$string='<?xml version="1.0" encoding="UTF-8"?>
+<params>
+</params>';
+
+$xmlreply= new SimpleXMLElement($string);
+//$xmlreply->preserveWhiteSpace = false;
+//$xmlreply->formatOutput = true;
+$temp=$xmlreply->xpath('/params');
+$params = $temp[0];//size"[@label='Large']");
+
+$params->addAttribute('name','webServerReply');
+
+$content = $params->addChild('section');
+$content->addAttribute('name', 'content');
+
+$requestid =  $content->addChild('attnum');
+$requestid->addAttribute('name','request_id');
+$requestid->addAttribute('val',$xml->request_id);
+
+
+$version =  $content->addChild('attnum');
+$version->addAttribute('name','webServerVersion');
+$version->addAttribute('val',$webserverversion);
+
+$date =  $content->addChild('attnum');
+$date->addAttribute('name','date');
+$date->addAttribute('val',time());
+
+$error =  $content->addChild('attstr');
+$error->addAttribute('name','error');
+$error->addAttribute('val','this is an error');
+
+$reply = $content->addChild('section');
+$reply->addAttribute('name','reply');
+
+//process the request
 foreach ($xml->request as $requestype => $requestdata){
 	if(property_exists($requestdata,'id')){
 		//there is already an id assigned, update the old data into the database
 		$conditions = new stdClass;
 		$conditions->id=$requestdata->id;
 		$myDb->update($requestdata, $requestype, $conditions);
+
+		//xml
+		$races =  $reply->addChild('section');
+		$races->addAttribute('name','races');
 		
+		$id = $races->addChild('attnum');
+		$id->addAttribute('name', 'id');
+		$id->addAttribute('val', $conditions->id);
+		//xml messages
+		$messagges =  $reply->addChild('section');
+		$messagges->addAttribute('name','messages');
+
+		$number =  $messagges->addChild('attnum');
+		$number->addAttribute('name','number');
+		$number->addAttribute('val', 1);
+
+		$msg0 =  $messagges->addChild('attstr');
+		$msg0->addAttribute('name','message0');	
+		$msg0->addAttribute('val',"Final race position registered\nfrom the server");
+		/*
 		echo '<?xml version="1.0" encoding="UTF-8"?>
 		<params name="webServerReply">
 			<section name="content">
@@ -703,6 +850,7 @@ foreach ($xml->request as $requestype => $requestdata){
 				</section>
 			</section>
 		</params>';
+		*/
 	}else{
 		//this is new data, insert it into the database
 
@@ -711,6 +859,48 @@ foreach ($xml->request as $requestype => $requestdata){
 		switch ($requestype){
 			case 'races':
 				$result=$myDb->insert($requestdata, $requestype);
+				
+				//xml
+				$races =  $reply->addChild('section');
+				$races->addAttribute('name','races');
+				
+				$id = $races->addChild('attnum');
+				$id->addAttribute('name', 'id');
+				$id->addAttribute('val', $myDb->lastInsertId);
+				
+
+
+				//select the best lap for this car/track combo
+				$query="
+				SELECT min(A.laptime) as bestlap
+				  FROM laps A
+				INNER
+				  JOIN races B
+					ON A.race_id = B.id
+				WHERE
+					B.car_id = '".$requestdata->car_id."'
+					AND B.track_id = '".$requestdata->track_id."'
+				";
+				$bestlap = $myDb->customSelect($query);
+
+
+
+				//xml messages
+				$messagges =  $reply->addChild('section');
+				$messagges->addAttribute('name','messages');
+
+				$number =  $messagges->addChild('attnum');
+				$number->addAttribute('name','number');
+				$number->addAttribute('val', 1);
+
+				$msg0 =  $messagges->addChild('attstr');
+				$msg0->addAttribute('name','message0');	
+				$msg0->addAttribute('val',"Race registered\nfrom the server\n-\nYour best lap with this\ncar/track combo is\n".formatLaptime($bestlap[0]['bestlap']));				
+
+
+
+				
+				/*
 				echo '<?xml version="1.0" encoding="UTF-8"?>
 				<params name="webServerReply">
 					<section name="content">
@@ -719,15 +909,66 @@ foreach ($xml->request as $requestype => $requestdata){
 						<attnum name="date" val="12324564"/>
 						<attstr name="error" val=""/>
 						<section name="reply">
+							<section name="messages">
+								<attnum name="number" val="1"/>
+								<attstr name="message0" val="msgserver"/>
+							</section>
 							<section name="races">
 								<attnum name="id" val="'.$myDb->lastInsertId.'"/>
 							</section>
 						</section>
 					</section>
 				</params>';
+				*/
 			break;
 			case 'laps':
 				$result=$myDb->insert($requestdata, $requestype);
+				
+				//xml
+				$laps =  $reply->addChild('section');
+				$laps->addAttribute('name','laps');
+				
+				$id = $laps->addChild('attnum');
+				$id->addAttribute('name', 'id');
+				$id->addAttribute('val', $myDb->lastInsertId);
+				
+				//select the car and track id for this race
+				$query="
+				SELECT track_id, car_id
+				FROM races
+				WHERE
+					id =".$requestdata->race_id." 
+				";
+				$racedata = $myDb->customSelect($query);					
+								
+				//select the best lap for this car/track combo
+				$query="
+				SELECT min(A.laptime) as bestlap
+				  FROM laps A
+				INNER
+				  JOIN races B
+					ON A.race_id = B.id
+				WHERE
+					B.car_id = '".$racedata[0]['car_id']."'
+					AND B.track_id = '".$racedata[0]['track_id']."'
+				";
+				$bestlap = $myDb->customSelect($query);				
+				
+				
+				
+				//xml messages
+				$messagges =  $reply->addChild('section');
+				$messagges->addAttribute('name','messages');
+
+				$number =  $messagges->addChild('attnum');
+				$number->addAttribute('name','number');
+				$number->addAttribute('val', 1);
+
+				$msg0 =  $messagges->addChild('attstr');
+				$msg0->addAttribute('name','message0');	
+				$msg0->addAttribute('val',"Position:".$requestdata->position."\nFuel:".$requestdata->fuel."\nLap:Best: ".formatLaptime($bestlap[0]['bestlap'])."\nLast: ".formatLaptime($requestdata->laptime)."\n Diff: ".formatLaptime($requestdata->laptime-$bestlap[0]['bestlap']));
+				
+				/*
 				echo '<?xml version="1.0" encoding="UTF-8"?>
 				<params name="webServerReply">
 					<section name="content">
@@ -739,9 +980,16 @@ foreach ($xml->request as $requestype => $requestdata){
 							<section name="laps">
 								<attnum name="id" val="'.$myDb->lastInsertId.'"/>
 							</section>
+							<section name="messages">
+								<attnum name="number" val="3"/>
+								<attstr name="message0" val="So you have\n a good lap on the go"/>
+								<attstr name="message1" val="good to kwno"/>
+								<attstr name="message2" val="best lap"/>
+							</section>
 						</section>
 					</section>
 				</params>';
+				*/
 			break;
 			case 'login':
 				$results=$myDb->select($requestdata, 'users');
@@ -756,6 +1004,31 @@ foreach ($xml->request as $requestype => $requestdata){
 					$conditions = new stdClass;
 					$conditions->id=$user['id'];
 					$myDb->update($user, 'users', $conditions);
+					
+					//xml
+					$login =  $reply->addChild('section');
+					$login->addAttribute('name','login');
+					
+					$sessionid = $login->addChild('attstr');
+					$sessionid->addAttribute('name', 'sessionid');
+					$sessionid->addAttribute('val', $user['sessionid']);
+					
+					$id = $login->addChild('attnum');
+					$id->addAttribute('name', 'id');
+					$id->addAttribute('val', $user['id']);
+					
+					//xml messages
+					$messagges =  $reply->addChild('section');
+					$messagges->addAttribute('name','messages');
+
+					$number =  $messagges->addChild('attnum');
+					$number->addAttribute('name','number');
+					$number->addAttribute('val', 1);
+
+					$msg0 =  $messagges->addChild('attstr');
+					$msg0->addAttribute('name','message0');	
+					$msg0->addAttribute('val',"Succesfull logged in as\n\n".$user['username']);						
+					/*
 					echo '<?xml version="1.0" encoding="UTF-8"?>
 					<params name="webServerReply">
 						<section name="content">
@@ -771,8 +1044,40 @@ foreach ($xml->request as $requestype => $requestdata){
 							</section>
 						</section>
 					</params>';
+					* 
+					<?xml version="1.0" encoding="UTF-8"?>
+					<params name="webServerReply">
+					  <section name="content">
+						<attnum name="webServerVersion" val="1"/>
+						<attnum name="date" val="1430672345"/>
+						<attstr name="error" val="this is an error"/>
+						<reply>
+						  <section name="login">
+							<attstr name="sessionid" val="ea6a300712d54b0db07093395ba962"/>
+							<attnum name="id" val="2"/>
+						  </section>
+						  <section name="messages">
+							<attnum name="number" val="1"/>
+							<attstr name="message0" val="Succesfull logged in!"/>
+						  </section>
+						</reply>
+					  </section>
+					</params>
+
+
+					*/
 				}else{
-					
+					//xml messages
+					$messagges =  $reply->addChild('section');
+					$messagges->addAttribute('name','messages');
+
+					$number =  $messagges->addChild('attnum');
+					$number->addAttribute('name','number');
+					$number->addAttribute('val', 1);
+
+					$msg0 =  $messagges->addChild('attstr');
+					$msg0->addAttribute('name','message0');	
+					$msg0->addAttribute('val',"FAILED to login in as\n\n".$requestdata->username."\n\nWrong username or password");							
 				}
 			//echo $result;
 
@@ -780,4 +1085,11 @@ foreach ($xml->request as $requestype => $requestdata){
 		}
 	}
 }
+
+//output the xml as string
+$domxml = new DOMDocument('1.0');
+$domxml->preserveWhiteSpace = false;
+$domxml->formatOutput = true;
+$domxml->loadXML($xmlreply->asXML());
+echo $domxml->saveXML();
 ?>

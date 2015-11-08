@@ -307,8 +307,8 @@ foreach ($races as $race){
 		<tr>
 		<td>$race[id]</td>
 		<td>".date_format(new DateTime($race['timestamp']), 'd M Y @ H:i')."</td>
-		<td>".$tracks->$race['track_id']->clickableImgTag()."</td>
-		<td>".$cars->$race['car_id']->clickableImgTag()."</td>
+		<td>".$tracks->$race['track_id']->name."</td>
+		<td>".$cars->$race['car_id']->name."</td>
 		<td>";
 		if($race['endposition']>0){
 			echo $race['endposition'];
@@ -386,6 +386,8 @@ foreach ($trackCategories as $trackCategory){
 	
 } 
 */
+
+raceGraph($race['id']);
 ?>
 
 

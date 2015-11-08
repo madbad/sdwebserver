@@ -16,8 +16,9 @@ $log = new Logger('./logs/webserver.log');
 $myDb=new DataBase($config->database);
 
 // select interested period
-$backto=time()-(7*24*60*60);
-
+$datediff=(7*24*60*60);
+$backto=time()-$datediff;
+//echo 'Back to: '. date('d-m-Y', $backto);
 
 //print the header for the page
 require_once './header.inc.php';
@@ -28,6 +29,10 @@ if (array_key_exists('cat', $_GET)){
 	$carCatId=$_GET['cat'];
 }
 
+//reorder the cetegories by name
+$carCategoriesList = get_object_vars($carCategories);
+ksort($carCategoriesList);
+
 ?>
 <table class="fullPage"><tr><td class="verticalMenu" style="width: 15em;">
 	<b>Category selection</b>:
@@ -36,7 +41,7 @@ if (array_key_exists('cat', $_GET)){
 		  ## generate the car category selection menu
 		  ################################
 		 */
-		foreach ($carCategories as $id => $category){
+		foreach ($carCategoriesList as $id => $category){
 			//if the category contain no cars we do no consider it
 			//todo: should we display only officially released ones?
 			if(count($category->cars) > 0){
@@ -100,11 +105,12 @@ if (array_key_exists('cat', $_GET)){
 			## WITH A CAR OF THIS CATEGORY
 			################################
 			*/
+
 			$query="
 				SELECT B.user_id, COUNT(*) as count
 				FROM races B
 				WHERE UNIX_TIMESTAMP(B.timestamp) > $backto
-				AND $carsql
+				AND ($carsql)
 				GROUP BY B.user_id
 				ORDER BY COUNT(*) DESC";
 
@@ -146,7 +152,7 @@ if (array_key_exists('cat', $_GET)){
 				ON A.race_id = B.id
 			WHERE
 				UNIX_TIMESTAMP(B.timestamp) > $backto
-				AND $carsql
+				AND ($carsql)
 			GROUP BY
 				B.track_id,
 				A.wettness
@@ -190,7 +196,7 @@ if (array_key_exists('cat', $_GET)){
 				SELECT track_id, COUNT(*) as count
 				FROM races B
 				WHERE UNIX_TIMESTAMP(timestamp) > $backto
-				AND $carsql
+				AND ($carsql)
 				GROUP BY B.track_id
 				ORDER BY COUNT(*) DESC";
 			$result = $myDb->customSelect($query);
@@ -218,7 +224,7 @@ if (array_key_exists('cat', $_GET)){
 				SELECT car_id, COUNT(*) as count
 				FROM races B
 				WHERE UNIX_TIMESTAMP(timestamp) > $backto
-				AND $carsql
+				AND ($carsql)
 				GROUP BY B.car_id
 				ORDER BY COUNT(*) DESC";
 

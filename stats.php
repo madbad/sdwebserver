@@ -17,7 +17,7 @@ $myDb=new DataBase($config->database);
 
 //
 $params =  new stdClass;
-$params->lap_user_id ='mad_wheel';
+$params->lap_user_id =2;
 //$params->lap_track ='';
 //$params->lap_race_type ='';
 $params->lap_track_name ='Pinabashi Park';

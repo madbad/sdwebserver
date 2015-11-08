@@ -142,6 +142,26 @@ function secondsToTime($seconds) {
 ###################################
 ## 
 ###################################
+function formatLaptime($seconds) {
+	$seconds = $seconds *1;
+	$str='';
+
+	//minuti
+	$str.= sprintf('%02d', ($seconds/60)).':';
+	$seconds = fmod($seconds, 60); 
+
+	//secondi
+	$str.=  sprintf('%02d',$seconds).'.';
+
+	//decimali
+	$decimals =  fmod($seconds, 1)*1000;
+	$str.= sprintf('%03d',$decimals);
+
+	return $str;
+}
+###################################
+## 
+###################################
 function percentStr($smallvalue, $bigvalue) {
 	if($bigvalue==0){return '-%';}
 	$percent = round($smallvalue*100/$bigvalue,0);
@@ -166,5 +186,111 @@ function weatherTag($value) {
 		return '<i class="wi wi-rain"></i>';
 		break;		
 	}
+}
+
+###################################
+## 
+###################################
+function raceGraph($raceId) {
+	global $myDb;
+	$query="
+	SELECT A.id, A.laptime, A.position, A.fuel, A.wettness
+	  FROM laps A
+	INNER
+	  JOIN races B
+		ON A.race_id = B.id
+	WHERE
+		B.id = $raceId
+	";
+	$laps = $myDb->customSelect($query);
+	foreach($laps as $lap){
+		$ids[]= $lap['id'];
+		$laptimes[]= $lap['laptime'];
+		$positions[]= $lap['position'];
+		$fuels[]= $lap['fuel'];
+		$wettnesss[]= $lap['wettness'];
+	}
+echo "
+<script src='http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js'></script>
+<script src='http://code.highcharts.com/highcharts.js'></script>
+<div id='chart'></div>
+<SCRIPT>
+$(function () {
+        $('#chart').highcharts({
+            title: {
+                text: 'Race graph',
+                x: -20 //center
+            },
+            subtitle: {
+                text: 'Track: ',
+                x: -20
+            },
+
+            xAxis: {
+                categories: JSON.parse('".json_encode($ids, JSON_NUMERIC_CHECK)."')
+            },
+
+            yAxis: [
+				{
+					title: {
+						text: 'Time (seconds)'
+					},
+					plotLines: [{
+						value: 0,
+						width: 1,
+						color: '#808080'
+					  }]
+				},
+				{
+					title: {
+						text: 'Fuel (liters)'
+					},
+					plotLines: [{
+						value: 0,
+						width: 1,
+						color: '#808080'
+					  }]
+				},
+				{
+					title: {
+						text: 'Position'
+					},
+					reversed: true,
+					plotLines: [{
+						value: 0,
+						width: 1,
+						color: '#808080'
+					}]
+				}            
+            ],
+ tooltip: {
+            shared: true
+        },
+            legend: {
+                layout: 'vertical',
+                align: 'right',
+                verticalAlign: 'middle',
+                borderWidth: 0
+            },
+            series: [{
+				yAxis:0,
+                name: 'Laptime',
+                data: JSON.parse('".json_encode($laptimes, JSON_NUMERIC_CHECK)."')
+            },
+            {
+				yAxis:1,
+                name: 'Fuel',
+                data: JSON.parse('".json_encode($fuels, JSON_NUMERIC_CHECK)."')
+            },
+            {
+				yAxis:2,
+                name: 'Position',
+                data: JSON.parse('".json_encode($positions, JSON_NUMERIC_CHECK)."')
+            }],
+        });
+    });
+</SCRIPT>
+";
+	
 }
 ?>
