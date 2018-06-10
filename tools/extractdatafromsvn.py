@@ -156,11 +156,11 @@ for category in trackCategoryFolders:
 						trackCategory= root.findall("./section[@name='Header']/attstr[@name='category']")[0].attrib['val']
 						imgFileUrl= trackFolder+'outline.png'
 						
-##						if os.path.isfile(imgFileUrl):
-##							newImgUrl= './../img/tracks/'+track+'-outline.png'
-##							trackImg= './img/tracks/'+track+'-outline.png'
-##							shutil.copyfile(imgFileUrl, newImgUrl)
-##							
+						if os.path.isfile(imgFileUrl):
+							newImgUrl= './../img/tracks/'+track+'-outline.png'
+							trackImg= './img/tracks/'+track+'-outline.png'
+							shutil.copyfile(imgFileUrl, newImgUrl)
+							
 						#populate the car object with all the infos of the car
 						tracks[trackId]={}
 						tracks[trackId]['id']=trackId
