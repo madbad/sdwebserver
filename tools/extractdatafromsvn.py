@@ -3,6 +3,8 @@
 # tracks outlines
 # from the tgiven svn repo to a specified folder in the webserver
 
+# todo: check if directories exist: "cars" and "tracks" in "img", if not create them
+
 import os
 import sys
 import shutil
@@ -51,7 +53,7 @@ for catFile in catFiles:
 			carCategories[catId]['cars']=[]
 			carCategories[catId]['name']=catName
 		
-			print 'Processed: '+catId+' : '+catName
+			#print 'Processed: '+catId+' : '+catName
 
 
 ##============================
@@ -85,6 +87,7 @@ for folder in carFolders:
 
 		#car category
 		carCategory= root.findall("./section[@name='Car']/attstr[@name='category']")[0].attrib['val']
+		carWidth= root.findall("./section[@name='Car']/attnum[@name='body length']")[0].attrib['val']
 		
 		#assign the car to a car categorie
 		carCategories[carCategory]['cars'].append(carId)
@@ -96,7 +99,7 @@ for folder in carFolders:
 		cars[carId]['img']=carImg
 		cars[carId]['category']=carCategory
 
-		print 'Processed: '+carId+' : '+carName
+		print 'Processed: '+carId+' : '+carName +' : '+carWidth
 
 ##============================
 ## EXTRACT TRACKS CATEGORY DATA
@@ -153,11 +156,11 @@ for category in trackCategoryFolders:
 						trackCategory= root.findall("./section[@name='Header']/attstr[@name='category']")[0].attrib['val']
 						imgFileUrl= trackFolder+'outline.png'
 						
-						if os.path.isfile(imgFileUrl):
-							newImgUrl= './../img/tracks/'+track+'-outline.png'
-							trackImg= './img/tracks/'+track+'-outline.png'
-							shutil.copyfile(imgFileUrl, newImgUrl)
-							
+##						if os.path.isfile(imgFileUrl):
+##							newImgUrl= './../img/tracks/'+track+'-outline.png'
+##							trackImg= './img/tracks/'+track+'-outline.png'
+##							shutil.copyfile(imgFileUrl, newImgUrl)
+##							
 						#populate the car object with all the infos of the car
 						tracks[trackId]={}
 						tracks[trackId]['id']=trackId

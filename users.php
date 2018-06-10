@@ -70,10 +70,10 @@ if($myuser->sessiontimestamp>0){
 	if($years<1 &&$months<1 && $days<1 && $hours<1 && $minutes<1){
 		$ago='Now';	
 	}else{
-		$ago.='ago';	
+		$ago.='ago';
 	}
 }else{
-	$ago='Never been active';	
+	$ago='Never been active';
 }
 
 	echo "\n\t\t\t<td>".$ago."</td>";

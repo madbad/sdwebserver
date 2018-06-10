@@ -106,7 +106,7 @@ if (array_key_exists('register', $_GET)){
 	if(!count($errors)){
 		$user = new User('');
 		unset($_POST['passwordcheck']);
-		
+		unset($user->id);
 		$user->import($_POST);
 		$result=$myDb->insert($user, 'users');
 		$user->id=$myDb->lastInsertId;
@@ -117,20 +117,19 @@ if (array_key_exists('register', $_GET)){
 				$imgerrors=saveImgAsPngFromUpload($imgdest);
 				if(count($imgerrors)<1){
 					//upload successfull, use uploaded image
-					$user->img= './'.$imgdest;			
+					$user->img= './'.$imgdest;
 				}else{
-					$imgerrors[]='We will use a default image for your profile until you upluad a valid one.';
+					$imgerrors[]='We will use a default image for your profile until you upload a valid one.';
 					foreach($imgerrors as $error){
 						echo "\n<div class='warning'>".$error."</div>";
 					}
 					//errors uploading img file, use default one
-					$user->img= './img/user.png';			
+					$user->img= './img/user.png';
 				}
 			}else{
 				//no img file provided use default one
-				$user->img= './img/user.png';			
+				$user->img= './img/user.png';
 			}
-
 
 			$params =  new stdClass;
 			$params->id =$user->id;
@@ -143,11 +142,11 @@ if (array_key_exists('register', $_GET)){
 			echo "<br>You have sucessfully registered,";
 			echo "<br>wellcome to the Speed Dreams Comunity.";
 			//echo "<br>Now visit your ".$user->getLink('profile');
-			//echo "<br>Nor go to the <a href='./' alt='Home page'>home page</a>home page";
+			//echo "<br>Or go to the <a href='./' alt='Home page'>home page</a>home page";
 			echo "<br>Remember to insert your username and password into the \"Speed-Dreams Player configuration menu\" to allow us to track your races and lap times.";
 			echo "</div>";
 
-			exit;	
+			exit;
 		}else{
 			echo "\n<div class='error'>Something gone wrong with your registration process.</div>";
 		}

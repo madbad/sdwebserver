@@ -4,7 +4,8 @@
 ###################################
 class Logger
 {
-	function Logger($logFile){
+	function __construct($logFile){
+	//function Logger($logFile){
 		$this->logFile=$logFile;
 
 		//backup the old log
@@ -20,6 +21,7 @@ class Logger
 	public function log($type, $text) {
 		$time = date("d/m/Y G:i:s");
 		$log = '('.$type.') '.$time.' # '.$text."\n";
+		//echo $log;
 		$this->writeToLogFile($log);
 	}
 
@@ -43,7 +45,7 @@ class Logger
 			or die ('<b>Error</b>:  Unable to write to the log file');
 	}
 	public function backupOldLog(){
-		rename($this->logFile, $this->logFile.'.'.time().'.backup.txt');
+		@rename($this->logFile, $this->logFile.'.'.time().'.backup.txt');
 	}
 
 
@@ -192,6 +194,8 @@ function weatherTag($value) {
 ## 
 ###################################
 function raceGraph($raceId) {
+	//if no race id skip this
+	if ($raceId==""){return;}
 	global $myDb;
 	$query="
 	SELECT A.id, A.laptime, A.position, A.fuel, A.wettness
@@ -203,6 +207,12 @@ function raceGraph($raceId) {
 		B.id = $raceId
 	";
 	$laps = $myDb->customSelect($query);
+
+	if(count($laps)<1){
+		echo "No lap to show for session #$raceId.";
+		return;
+	}
+
 	foreach($laps as $lap){
 		$ids[]= $lap['id'];
 		$laptimes[]= $lap['laptime'];
@@ -210,6 +220,7 @@ function raceGraph($raceId) {
 		$fuels[]= $lap['fuel'];
 		$wettnesss[]= $lap['wettness'];
 	}
+
 echo "
 <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js'></script>
 <script src='http://code.highcharts.com/highcharts.js'></script>
@@ -293,4 +304,64 @@ $(function () {
 ";
 	
 }
+
+
+###################################
+## 
+###################################
+function displaySessionLaps($raceId, $myDb) {
+	//select the laps from the last race
+	$query="
+	select *
+	  from laps
+	  where race_id=$raceId
+	";
+	$laps = $myDb->customSelect($query);
+	
+	echo "
+	<h1 id='raceSessionLaps'>Laps from session #$raceId</h1>
+	<table width=\"98%\">
+		<tr>
+			<th>Id</th>
+			<th>Laptime</th>
+			<th>Fuel</th>
+			<th>Position</th>
+			<th>Weather</th>
+			<th>Setup File</th>
+		</tr>
+	";
+
+	if($laps){
+		foreach ($laps as $lap){
+			echo "
+				<tr>
+				<td>$lap[id]</td>
+				<td>".formatLaptime($lap['laptime'])."</td>
+				<td>$lap[fuel]</td>
+				<td>$lap[position]</td>
+				<td>".weatherTag($lap['wettness'])."</td>
+				<td><a href='./downloadsetup.php?id=$lap[id]' download='car-setup.xml'>Setup</a></td>
+				</tr>
+				";
+		}
+	}
+	
+	echo "</table>";
+}
+
+###################################
+## 
+###################################
+//this will rewrite the current url 
+//and modify the given param if needed
+function rewriteUrl($paramName, $paramValue){
+	$query = $_GET;
+	// replace parameter(s)
+	$query[$paramName] = $paramValue;
+	// rebuild url
+	$query_result = http_build_query($query);
+	// new link
+	return $_SERVER['PHP_SELF'].'?'.$query_result;
+}
+
 ?>

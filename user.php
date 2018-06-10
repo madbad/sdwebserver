@@ -37,6 +37,15 @@ if($user){
 	echo 'There is no user with such id.';
 	exit;
 }
+###################################
+## get races
+###################################
+$query="
+select *
+  from races
+  where user_id=$user[id]";
+$raceSessions= $myDb->customSelect($query);
+
 
 ###################################
 ## get races
@@ -216,7 +225,7 @@ require_once './header.inc.php';
 					<td colspan="2"><img src="<?php echo $user['img']?>" width="400" alt="<?php echo $user['id'] ?>" ></td>
 				</tr>
 
-			</table>		
+			</table>
 		</td>
 		<td>
 			<table>
@@ -270,7 +279,7 @@ require_once './header.inc.php';
 					<td>
 						<?php 
 							if($mostusedcar){
-								echo $cars->$mostusedcar['car_id']->clickableImgTag();
+								echo $cars->{$mostusedcar['car_id']}->clickableImgTag();
 							}
 						?>
 					</td>
@@ -280,7 +289,7 @@ require_once './header.inc.php';
 					<td>
 						<?php
 							if($mostusedtrack){
-								echo $tracks->$mostusedtrack['track_id']->clickableImgTag();
+								echo $tracks->{$mostusedtrack['track_id']}->clickableImgTag();
 							}
 						?>
 					</td>
@@ -294,7 +303,8 @@ require_once './header.inc.php';
 <h1>Latest Races</h1>
 <table width="98%">
 	<tr>
-		<th>Race id</th>
+		<th>Session id</th>
+		<th>Type</th>
 		<th>Started on</th>
 		<th>Track</th>
 		<th>Car</th>
@@ -302,13 +312,14 @@ require_once './header.inc.php';
 	</tr>
 <?php
 
-foreach ($races as $race){
+foreach ($raceSessions as $race){
 	echo "
 		<tr>
-		<td>$race[id]</td>
+		<td><a href='".rewriteUrl('raceId',$race['id'])."#raceSessionLaps'>$race[id]</a></td>
+		<td>".racetype($race['type'])."</td>
 		<td>".date_format(new DateTime($race['timestamp']), 'd M Y @ H:i')."</td>
-		<td>".$tracks->$race['track_id']->name."</td>
-		<td>".$cars->$race['car_id']->name."</td>
+		<td>".$tracks->{$race['track_id']}->name."</td>
+		<td>".$cars->{$race['car_id']}->name."</td>
 		<td>";
 		if($race['endposition']>0){
 			echo $race['endposition'];
@@ -316,7 +327,7 @@ foreach ($races as $race){
 			if($gain>=0){
 				echo " <sup style='color:green;'>(+$gain)</sup>";
 			}else{
-				echo "<sup style='color:red;'>($gain)</sup>";			
+				echo "<sup style='color:red;'>($gain)</sup>";
 			}
 
 		}else{
@@ -329,51 +340,23 @@ foreach ($races as $race){
 
 <!-- last race from this driver -->
 <?php
-//select the last race
-$query="
-select MAX(id) as id
-  from races
-  where user_id=$user[id]
-";
-$race = $myDb->customSelect($query);
-$race= $race[0];
-//select the laps from the last race
-$query="
-select *
-  from laps
-  where race_id=$race[id]
-";
-$laps = $myDb->customSelect($query);
-?>
-<h1>Laps from the last session (practice, qualify or race)</h1>
-<table width="98%">
-	<tr>
-		<th>Id</th>
-		<th>Laptime</th>
-		<th>Fuel</th>
-		<th>Position</th>
-		<th>Weather</th>		
-		<th>Setup File</th>		
-	</tr>
-<?php
-if($laps){
-	foreach ($laps as $lap){
-		echo "
-			<tr>
-			<td>$lap[id]</td>
-			<td>$lap[laptime]</td>
-			<td>$lap[fuel]</td>
-			<td>$lap[position]</td>
-			<td>".weatherTag($lap['wettness'])."</td>
-			<td><a href='./downloadsetup.php?id=$lap[id]' download='car-setup.xml'>Setup</a></td>
-			</tr>
-			";
-	}
-}
-?>
 
-</table>
-<?php
+if(array_key_exists('raceId', $_GET)){
+	$raceId= $_GET['raceId'];
+}else{
+	//select the last race
+	$query="
+	select MAX(id) as id
+	  from races
+	  where user_id=$user[id]
+	";
+	$race = $myDb->customSelect($query);
+	$race= $race[0];
+	$raceId= $race['id'];
+}
+
+
+
 /*
 foreach ($trackCategories as $trackCategory){
 	//print_r($trackCategory);
@@ -387,7 +370,8 @@ foreach ($trackCategories as $trackCategory){
 } 
 */
 
-raceGraph($race['id']);
+displaySessionLaps($raceId, $myDb);
+raceGraph($raceId);
 ?>
 
 

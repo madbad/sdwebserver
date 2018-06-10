@@ -15,10 +15,53 @@ $log = new Logger('./logs/webserver.log');
 //initialize the database
 $myDb=new DataBase($config->database);
 
+
 // select interested period
-$datediff=(7*24*60*60);
-$backto=time()-$datediff;
-//echo 'Back to: '. date('d-m-Y', $backto);
+if(array_key_exists('period', $_COOKIE)){
+	$period = $_COOKIE['period'];
+}
+if(array_key_exists('period',$_GET)){
+	setcookie( "period", $_GET['period'], time()+(60*60*24*30) );
+	$period = $_GET['period'];
+}else{
+	$period='year';
+}
+
+switch ($period){
+case 'today'://today
+	$datediff=(1*24*60*60);
+	$backto=time()-$datediff;
+	$periodString ='In the last day';
+	break;
+case 'week'://last week
+	$datediff=(7*24*60*60);
+	$backto=time()-$datediff;
+	$periodString ='In the last week';
+	break;
+case 'month'://last month
+	$datediff=(30*24*60*60);
+	$backto=time()-$datediff;
+	$periodString ='In the last month';
+	break;
+case 'year'://last year
+	$datediff=(365*24*60*60);
+	$backto=time()-$datediff;
+	$periodString ='In the last year';
+	break;
+/*
+case 'date'://from this date
+	$datediff=(7*24*60*60);
+	$backto=time()-$datediff;
+	$periodString ='From '.date('d-m-Y', $backto);
+	break;
+*/
+case 'allTime'://always
+	$datediff=(50000*24*60*60);
+	$backto=time()-$datediff;
+	$periodString ='all time';
+	break;
+
+}
 
 //print the header for the page
 require_once './header.inc.php';
@@ -57,7 +100,8 @@ ksort($carCategoriesList);
 				}else{
 					$class='';
 				}
-				echo "\n<a href='?cat=".$id."' $class>".$category->name."</a>";
+				//echo "\n<a href='?cat=".$id."' $class>".$category->name."</a>";
+				echo "\n".'<a href="'.rewriteUrl('cat',$id).'"'."$class>".$category->name."</a>";
 			}			
 		}
 		
@@ -82,6 +126,12 @@ ksort($carCategoriesList);
 	?>
 </td>
 <td>
+	Period:
+	<a href="<?php echo rewriteUrl('period','today'); ?>">Today</a>
+	<a href="<?php echo rewriteUrl('period','week'); ?>">Week</a>
+	<a href="<?php echo rewriteUrl('period','month'); ?>">Month</a>
+	<a href="<?php echo rewriteUrl('period','year'); ?>">Year</a>
+	<a href="<?php echo rewriteUrl('period','allTime'); ?>">AllTime</a>
 	<h1>
 		<?php
 			 echo $carCategories->$carCatId->name;
@@ -91,7 +141,7 @@ ksort($carCategoriesList);
 	<table class="fullPage">
 		<thead>
 			<tr>
-				<th colspan="2">Most active users<br><small>In the last 7 days</small></th>
+				<th colspan="2">Most active users<br><small><?php echo $periodString; ?></small></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -129,12 +179,12 @@ ksort($carCategoriesList);
 	<table class="fullPage">
 		<thead>
 			<tr>
-				<th colspan="5">Bests lap for each track<br><small>In the last 7 days</small></th>
+				<th colspan="6">Bests lap for each track<br><small><?php echo $periodString; ?></small></th>
 			</tr>
 		</thead>
 		<tbody>
 		<tr>
-			<td>Track</td><td>Pilot</td><td>Car</td><td>Laptime</td><td>Weather</td>
+			<td>Track</td><td>Pilot</td><td>Car</td><td>Laptime</td><td>Weather</td><td>Date</td>
 		</tr>
 		<?php
 			/*
@@ -145,7 +195,7 @@ ksort($carCategoriesList);
 			*/
 
 			$query="
-			SELECT B.track_id, B.car_id, B.user_id, A.wettness, min(A.laptime) as bestlap
+			SELECT B.track_id, B.car_id, B.user_id, B.timestamp, A.wettness, min(A.laptime) as bestlap
 			  FROM laps A
 			INNER
 			  JOIN races B
@@ -162,19 +212,26 @@ ksort($carCategoriesList);
 				$user=new User($mylap['user_id']);
 				echo "<tr>";
 				echo "<td>";
-				echo $tracks->$mylap['track_id']->clickableName();
+				$track = $mylap['track_id'];
+				echo $tracks->$track->clickableName();
+				//echo $tracks->$mylap['track_id']->clickableName();
 				echo "</td>";
 				echo "<td>";
 				echo $user->getLink();
 				echo "</td>";
 				echo "<td>";
-				echo $cars->$mylap['car_id']->clickableName();
+				$car = $mylap['car_id'];
+				echo $cars->$car->clickableName();
+				//echo $cars->$mylap['car_id']->clickableName();
 				echo "</td>";
 				echo "<td>";
-				echo $mylap['bestlap'];
+				echo formatLaptime($mylap['bestlap']);
 				echo "</td>";	
 				echo "<td>";
 				echo weatherTag($mylap['wettness']);
+				echo "</td>";	
+				echo "<td>";
+				echo $mylap['timestamp'];
 				echo "</td></tr>";
 			}
 		?>
@@ -184,7 +241,7 @@ ksort($carCategoriesList);
 	<table class="fullPage">
 		<thead>
 			<tr>
-				<th colspan="2">Most used Tracks<br><small>In the last 7 days</small></th>
+				<th colspan="2">Most used Tracks<br><small><?php echo $periodString; ?></small></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -202,7 +259,8 @@ ksort($carCategoriesList);
 			$result = $myDb->customSelect($query);
 			if($result){
 				foreach ($result as $race){
-					echo "<tr><td>".$tracks->$race['track_id']->clickableName()."</td><td>$race[count]</td></tr>";
+					$track= $race['track_id'];
+					echo "<tr><td>".$tracks->$track->clickableName()."</td><td>$race[count]</td></tr>";
 				}
 			}
 		?>
@@ -212,7 +270,7 @@ ksort($carCategoriesList);
 	<table class="fullPage">
 		<thead>
 			<tr>
-				<th colspan="2">Top cars<br><small>In the last 7 days</small></th>
+				<th colspan="2">Top cars<br><small><?php echo $periodString; ?></small></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -231,7 +289,8 @@ ksort($carCategoriesList);
 			$result = $myDb->customSelect($query);
 			if($result){
 				foreach ($result as $race){
-					echo "<tr><td>".$cars->$race['car_id']->clickableName()."</td><td>$race[count]</td></tr>";
+					$car = $race['car_id'];
+					echo "<tr><td>".$cars->$car->clickableName()."</td><td>$race[count]</td></tr>";
 				}
 			}
 		?>

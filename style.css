@@ -111,6 +111,7 @@ table a{
 ###########################################*/
 .fullPage{
 	width:96%;
+
 }
 
 /* ########################################
@@ -167,7 +168,7 @@ form{
 }
 input{
   box-shadow:inset 0 0 15px 5px #DADADA;
-	background-color: white);
+	background-color: white;
 	font-size:1.2em;
 	color: #8E8E8E;
 	border-radius:0.2em;
@@ -220,3 +221,58 @@ color:black;
 font-size:1em;
 }
 
+sd-carcategoryselection{
+float:left;
+}
+
+sd-table{
+}
+.flexMainContainer{
+
+}
+
+.flexHeader{
+
+}
+.flexNavigation{
+
+}
+.flexContent{
+
+}
+.flexFooter{
+
+}
+
+.graphbar{
+	content: "\200B";
+	height: 100%;
+	width: 100%;
+	background-color:pink;
+	border:0.15em solid black;
+}
+.graphbar:after{
+	clear:both;
+	content:"";
+	display:block;
+}
+.graphbar div:nth-child(1) {
+	float:left;
+	height: 100%;
+	background: linear-gradient(to bottom right, orange, yellow);
+}
+.graphbar div:nth-child(2) {
+	float:left;
+	height: 100%;
+	background: linear-gradient(to bottom right, black, grey);
+}
+.graphbar div:nth-child(3) {
+	float:left;
+	height: 100%;
+	background: linear-gradient(to bottom right, green, lightgreen); 
+}
+.graphbar div:after{
+	clear:both;
+	content:"";
+	display:block;
+}
