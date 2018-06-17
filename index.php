@@ -179,12 +179,12 @@ ksort($carCategoriesList);
 	<table class="fullPage">
 		<thead>
 			<tr>
-				<th colspan="6">Bests lap for each track<br><small><?php echo $periodString; ?></small></th>
+				<th colspan="7">Bests lap for each track<br><small><?php echo $periodString; ?></small></th>
 			</tr>
 		</thead>
 		<tbody>
 		<tr>
-			<td>Track</td><td>Pilot</td><td>Car</td><td>Laptime</td><td>Weather</td><td>Date</td>
+			<td>Track</td><td>Pilot</td><td>Car</td><td>Laptime</td><td>Weather</td><td>Date</td><td>Session</td>
 		</tr>
 		<?php
 			/*
@@ -195,7 +195,7 @@ ksort($carCategoriesList);
 			*/
 
 			$query="
-			SELECT B.track_id, B.car_id, B.user_id, B.timestamp, A.wettness, min(A.laptime) as bestlap
+			SELECT A.race_id, B.track_id, B.car_id, B.user_id, B.timestamp, A.wettness, min(A.laptime) as bestlap
 			  FROM laps A
 			INNER
 			  JOIN races B
@@ -226,12 +226,15 @@ ksort($carCategoriesList);
 				echo "</td>";
 				echo "<td>";
 				echo formatLaptime($mylap['bestlap']);
-				echo "</td>";	
+				echo "</td>";
 				echo "<td>";
 				echo weatherTag($mylap['wettness']);
-				echo "</td>";	
+				echo "</td>";
 				echo "<td>";
 				echo $mylap['timestamp'];
+				echo "</td>";
+				echo "<td>";
+				echo "<a href='./race.php?id=".$mylap['race_id']."'>#".$mylap['race_id']."</a>";
 				echo "</td></tr>";
 			}
 		?>

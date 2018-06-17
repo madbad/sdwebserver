@@ -315,7 +315,7 @@ require_once './header.inc.php';
 foreach ($raceSessions as $race){
 	echo "
 		<tr>
-		<td><a href='".rewriteUrl('raceId',$race['id'])."#raceSessionLaps'>$race[id]</a></td>
+		<td><a href='./race.php?id=".$race['id']."'>$race[id]</a></td>
 		<td>".racetype($race['type'])."</td>
 		<td>".date_format(new DateTime($race['timestamp']), 'd M Y @ H:i')."</td>
 		<td>".$tracks->{$race['track_id']}->name."</td>
@@ -370,8 +370,8 @@ foreach ($trackCategories as $trackCategory){
 } 
 */
 
-displaySessionLaps($raceId, $myDb);
-raceGraph($raceId);
+//displaySessionLaps($raceId, $myDb);
+//raceGraph($raceId);
 ?>
 
 

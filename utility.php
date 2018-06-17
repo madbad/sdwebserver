@@ -315,6 +315,7 @@ function displaySessionLaps($raceId, $myDb) {
 	select *
 	  from laps
 	  where race_id=$raceId
+	  order by id asc
 	";
 	$laps = $myDb->customSelect($query);
 	
