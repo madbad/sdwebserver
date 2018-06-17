@@ -212,7 +212,9 @@ class Track
 	}
 	public function imgTag() {
 		return "<img width='80' src='".$this->img."' alt='".$this->name."' title='".$this->name."'>";
-
+	}
+	public function imgTagFull() {
+		return "<img src='".$this->img."'  class='carPreview' alt='track layout'>";
 	}
 	public function clickableName() {
 		return $this->linkTag($this->name);
@@ -248,11 +250,13 @@ class Car
 	public function imgTag() {
 //		return "<img width='300' src='".$this->img."'  class='carPreview' alt='car preview'>";
 		return "<img width='120' src='".$this->img."' alt='car preview'  title='".$this->name."'>";
-
 	}
+	public function imgTagFull() {
+		return "<img src='".$this->img."'  class='carPreview' alt='car preview'>";
+	}
+
 	public function clickableName() {
 		return $this->linkTag($this->name);
-
 	}
 	public function clickableImgTag() {
 		return $this->linkTag($this->imgTag());

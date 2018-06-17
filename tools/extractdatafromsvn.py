@@ -9,6 +9,7 @@ import os
 import sys
 import shutil
 import xml.etree.ElementTree as ET
+import re
 
 
 #=====================
@@ -99,6 +100,22 @@ for folder in carFolders:
 		cars[carId]['img']=carImg
 		cars[carId]['category']=carCategory
 
+		cars[carId]['width']=	root.findall("./section[@name='Car']/attnum[@name='overall width']")[0].attrib['unit'] +" "+ root.findall("./section[@name='Car']/attnum[@name='overall width']")[0].attrib['val']
+		cars[carId]['lenght']=	root.findall("./section[@name='Car']/attnum[@name='overall length']")[0].attrib['unit'] +" "+ root.findall("./section[@name='Car']/attnum[@name='overall length']")[0].attrib['val']
+		cars[carId]['mass']= root.findall("./section[@name='Car']/attnum[@name='mass']")[0].attrib['unit'] +" "+ root.findall("./section[@name='Car']/attnum[@name='mass']")[0].attrib['val']
+		#mpa11 musarasama has problems (missing some data)
+		try:
+			cars[carId]['fueltank']= root.findall("./section[@name='Car']/attnum[@name='fuel tank']")[0].attrib['unit'] +" "+ root.findall("./section[@name='Car']/attnum[@name='fuel tank']")[0].attrib['val']
+		except:
+			cars[carId]['fueltank']= "data unavailable"
+
+		try:
+			cars[carId]['engine']=root.findall("./section[@name='Engine']/attstr[@name='cilinders']")[0].attrib['val'] +" cilinders" + root.findall("./section[@name='Engine']/attstr[@name='shape']")[0].attrib['val'] +" "+ root.findall("./section[@name='Engine']/attstr[@name='capacity']")[0].attrib['val'] +" "+ root.findall("./section[@name='Engine']/attstr[@name='capacity']")[0].attrib['unit ']
+		except:
+			cars[carId]['engine']= "data unavailable"
+
+		cars[carId]['drivetrain']= root.findall("./section[@name='Drivetrain']/attstr[@name='type']")[0].attrib['val']
+
 		print 'Processed: '+carId+' : '+carName +' : '+carWidth
 
 ##============================
@@ -161,12 +178,18 @@ for category in trackCategoryFolders:
 							trackImg= './img/tracks/'+track+'-outline.png'
 							shutil.copyfile(imgFileUrl, newImgUrl)
 							
-						#populate the car object with all the infos of the car
+						#populate the car object with all the infos of the track
 						tracks[trackId]={}
 						tracks[trackId]['id']=trackId
 						tracks[trackId]['name']=trackName
 						tracks[trackId]['img']=trackImg
 						tracks[trackId]['category']=trackCategory
+						
+						
+						tracks[trackId]['author']=		root.findall("./section[@name='Header']/attstr[@name='author']")[0].attrib['val']
+						temp =	root.findall("./section[@name='Header']/attstr[@name='description']")[0].attrib['val'].replace("'","*")
+						tracks[trackId]['description'] = temp.encode('ascii','replace')
+						#tracks[trackId]['version']=		root.findall("./section[@name='Header']/attstr[@name='version']")[0].attrib['val']
 						#
 						trackCategories[category]['tracks'].append(trackId)
 

@@ -31,7 +31,10 @@ require_once './header.inc.php';
 		<td>
 			<?php 
 			echo '<h1>'.$track->name.'</h1>';
-			echo $track->imgTag();
+			echo "".$track->imgTagFull();
+			echo "<br>Author: ".$track->author;
+			echo "<br>Description: ".$track->description;
+
 			?>
 		</td>
 	</tr>

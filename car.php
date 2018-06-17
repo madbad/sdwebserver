@@ -39,7 +39,27 @@ require_once './header.inc.php';
 				</tr>
 				<tr>
 					<td>Prewiev</td>
-					<td><?php echo $car->imgTag(); ?></td>
+					<td><?php echo $car->imgTagFull(); ?></td>
+				</tr>
+				<tr>
+					<td>Engine</td>
+					<td><?php echo $car->engine; ?></td>
+				</tr>
+				<tr>
+					<td>Drivetrain</td>
+					<td><?php echo $car->drivetrain; ?></td>
+				</tr>
+				<tr>
+					<td>Width</td>
+					<td><?php echo $car->width; ?></td>
+				</tr>
+				<tr>
+					<td>Lenght</td>
+					<td><?php echo $car->lenght; ?></td>
+				</tr>
+				<tr>
+					<td>Fuel tank</td>
+					<td><?php echo $car->fueltank; ?></td>
 				</tr>
 			</table>
 		</td>
