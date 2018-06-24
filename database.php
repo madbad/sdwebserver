@@ -174,8 +174,13 @@ class User
 		$results = $myDb->select($params, 'users');
 		if ($results){
 			$result = $results[0];
+			$this->import($result);
+		}else{
+			//no valid result found! create a fake user
+			$this->username = '<i>guest</i>';
+			$this->nation = '';
+			
 		}
-		$this->import($result);
 	}
 	public function getLink($text='') {
 		if($text==''){$text=$this->username;}
@@ -214,7 +219,7 @@ class Track
 		return "<img width='80' src='".$this->img."' alt='".$this->name."' title='".$this->name."'>";
 	}
 	public function imgTagFull() {
-		return "<img src='".$this->img."'  class='carPreview' alt='track layout'>";
+		return "<img src='".$this->img."'  class='".$this->name."' alt='".$this->name."'>";
 	}
 	public function clickableName() {
 		return $this->linkTag($this->name);
@@ -249,10 +254,10 @@ class Car
 	}
 	public function imgTag() {
 //		return "<img width='300' src='".$this->img."'  class='carPreview' alt='car preview'>";
-		return "<img width='120' src='".$this->img."' alt='car preview'  title='".$this->name."'>";
+		return "<img width='120' src='".$this->img."' alt='".$this->name."'  title='".$this->name."'>";
 	}
 	public function imgTagFull() {
-		return "<img src='".$this->img."'  class='carPreview' alt='car preview'>";
+		return "<img src='".$this->img."'  class='carPreview' alt='".$this->name."'>";
 	}
 
 	public function clickableName() {
@@ -263,9 +268,7 @@ class Car
 	}
 	public function linkTag($content) {
 		return "<a href='./car.php?id=".$this->id."'>".$content."</a>";
-
 	}
-
 }
 ########################################################
 
@@ -279,7 +282,7 @@ class CarCategory
 			$this->{$key} = $value;
 		}
     }
-}		
+}
 ########################################################
 
 class TrackCategory
@@ -292,6 +295,8 @@ class TrackCategory
 			$this->{$key} = $value;
 		}
     }
-}		
+}
+
+
 
 ?>

@@ -45,8 +45,8 @@ echo "<table width='96%'>";
 //session type
 echo "<tr><td>Session Type: </td><td>".racetype($race['type'])."</td></tr>";
 echo "<tr><td>Date: </td><td>".date_format(new DateTime($race['timestamp']), 'd M Y @ H:i')."</td></tr>";
-echo "<tr><td>Track: </td><td>".$tracks->{$race['track_id']}->linkTag($tracks->{$race['track_id']}->name."<br>".$tracks->{$race['track_id']}->imgTag())."</td></tr>";
-echo "<tr><td>Car: </td><td>".$cars->{$race['car_id']}->linkTag($cars->{$race['car_id']}->name."<br>".$cars->{$race['car_id']}->imgTag())."</td></tr>";
+echo "<tr><td>Track: </td><td>".getTrack($race['track_id'])->linkTag(getTrack($race['track_id'])->name."<br>".getTrack($race['track_id'])->imgTag())."</td></tr>";
+echo "<tr><td>Car: </td><td>".getCar($race['car_id'])->linkTag(getCar($race['car_id'])->name."<br>".getCar($race['car_id'])->imgTag())."</td></tr>";
 
 
 //user

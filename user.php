@@ -279,7 +279,7 @@ require_once './header.inc.php';
 					<td>
 						<?php 
 							if($mostusedcar){
-								echo $cars->{$mostusedcar['car_id']}->clickableImgTag();
+								echo getCar($mostusedcar['car_id'])->clickableImgTag();
 							}
 						?>
 					</td>
@@ -289,7 +289,7 @@ require_once './header.inc.php';
 					<td>
 						<?php
 							if($mostusedtrack){
-								echo $tracks->{$mostusedtrack['track_id']}->clickableImgTag();
+								echo getTrack($mostusedtrack['track_id'])->clickableImgTag();
 							}
 						?>
 					</td>
@@ -318,8 +318,8 @@ foreach ($raceSessions as $race){
 		<td><a href='./race.php?id=".$race['id']."'>$race[id]</a></td>
 		<td>".racetype($race['type'])."</td>
 		<td>".date_format(new DateTime($race['timestamp']), 'd M Y @ H:i')."</td>
-		<td>".$tracks->{$race['track_id']}->name."</td>
-		<td>".$cars->{$race['car_id']}->name."</td>
+		<td>".getTrack($race['track_id'])->name."</td>
+		<td>".getCar($race['car_id'])->name."</td>
 		<td>";
 		if($race['endposition']>0){
 			echo $race['endposition'];

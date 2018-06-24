@@ -213,7 +213,7 @@ ksort($carCategoriesList);
 				echo "<tr>";
 				echo "<td>";
 				$track = $mylap['track_id'];
-				echo $tracks->$track->clickableName();
+				echo getTrack($track)->clickableName();
 				//echo $tracks->$mylap['track_id']->clickableName();
 				echo "</td>";
 				echo "<td>";
@@ -221,7 +221,7 @@ ksort($carCategoriesList);
 				echo "</td>";
 				echo "<td>";
 				$car = $mylap['car_id'];
-				echo $cars->$car->clickableName();
+				echo getCar($car)->clickableName();
 				//echo $cars->$mylap['car_id']->clickableName();
 				echo "</td>";
 				echo "<td>";
@@ -263,7 +263,7 @@ ksort($carCategoriesList);
 			if($result){
 				foreach ($result as $race){
 					$track= $race['track_id'];
-					echo "<tr><td>".$tracks->$track->clickableName()."</td><td>$race[count]</td></tr>";
+					echo "<tr><td>".getTrack($track)->clickableName()."</td><td>$race[count]</td></tr>";
 				}
 			}
 		?>
@@ -293,7 +293,7 @@ ksort($carCategoriesList);
 			if($result){
 				foreach ($result as $race){
 					$car = $race['car_id'];
-					echo "<tr><td>".$cars->$car->clickableName()."</td><td>$race[count]</td></tr>";
+					echo "<tr><td>".getCar($car)->clickableName()."</td><td>$race[count]</td></tr>";
 				}
 			}
 		?>

@@ -22,7 +22,7 @@ if(!array_key_exists('id', $_GET)){
 	echo 'No track specified.';
 	exit;
 }
-$car = $cars->{$_GET['id']};
+$car = getCar($_GET['id']);
 
 require_once './header.inc.php';
 ?>

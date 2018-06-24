@@ -65,7 +65,7 @@ class Logger
             (array) attributes: array witch keys are attribute key and values are attribute value
             (array) children: array of objects made with xml2obj() on each child
 **/
- function xmlObj($xmlstring){
+function xmlObj($xmlstring){
 	$obj = json_decode(json_encode(simplexml_load_string($xmlstring,'SimpleXMLElement',LIBXML_NOCDATA )));
 	//$obj = simplexml_load_string($xmlstring);
 	$obj->saveToDb = function(){
@@ -363,6 +363,42 @@ function rewriteUrl($paramName, $paramValue){
 	$query_result = http_build_query($query);
 	// new link
 	return $_SERVER['PHP_SELF'].'?'.$query_result;
+}
+
+
+function getCar($carId){
+	global $cars;
+	if(property_exists($cars, $carId)){
+		return $cars->$carId;
+	}else{
+		$fakeCar = new Car([]);
+		$fakeCar->category = '';
+		$fakeCar->engine = '';
+		$fakeCar->fueltank = '';
+		$fakeCar->name = $carId.'(Modded)';
+		$fakeCar->img = '';
+		$fakeCar->lenght = '';
+		$fakeCar->width = '';
+		$fakeCar->mass = '';
+		$fakeCar->drivetrain = '';
+		$fakeCar->id = $carId;
+		return $fakeCar;
+	}
+}
+function getTrack($trackId){
+	global $tracks;
+	if(property_exists($tracks, $trackId)){
+		return $tracks->$trackId;
+	}else{
+		$fakeTrack = new Track([]);
+		$fakeTrack->category = '';
+		$fakeTrack->description = '';
+		$fakeTrack->author = '';
+		$fakeTrack->id = $trackId;
+		$fakeTrack->name = $trackId.'(Modded)';
+		$fakeTrack->img = '';
+		return $fakeTrack;
+	}
 }
 
 ?>
