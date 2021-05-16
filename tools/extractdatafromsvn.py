@@ -39,7 +39,7 @@ for catFile in catFiles:
 		if os.path.isfile(xmlCatFile):
 			xmlFileUrl = xmlCatFile
 			parser = ET.XMLParser()
-			parser._parser.UseForeignDTD(True)
+			#parser.UseForeignDTD(True)
 			#parser.entity['default-surfaces'] = u'\u00A0'
 			#parser.entity['default-objects'] = u'\u00A0'
 			tree = ET.parse(xmlFileUrl, parser=parser)
@@ -85,11 +85,12 @@ for folder in carFolders:
 		#car name
 		carName=root.attrib['name']
 		carId=folder
-
 		#car category
 		carCategory= root.findall("./section[@name='Car']/attstr[@name='category']")[0].attrib['val']
 		carWidth= root.findall("./section[@name='Car']/attnum[@name='body length']")[0].attrib['val']
 		
+		print ('Processing car: '+carId+' : '+carName +' : '+carWidth)
+
 		#assign the car to a car categorie
 		carCategories[carCategory]['cars'].append(carId)
 		
@@ -100,9 +101,19 @@ for folder in carFolders:
 		cars[carId]['img']=carImg
 		cars[carId]['category']=carCategory
 
-		cars[carId]['width']=	root.findall("./section[@name='Car']/attnum[@name='overall width']")[0].attrib['unit'] +" "+ root.findall("./section[@name='Car']/attnum[@name='overall width']")[0].attrib['val']
-		cars[carId]['lenght']=	root.findall("./section[@name='Car']/attnum[@name='overall length']")[0].attrib['unit'] +" "+ root.findall("./section[@name='Car']/attnum[@name='overall length']")[0].attrib['val']
-		cars[carId]['mass']= root.findall("./section[@name='Car']/attnum[@name='mass']")[0].attrib['unit'] +" "+ root.findall("./section[@name='Car']/attnum[@name='mass']")[0].attrib['val']
+		try:
+			cars[carId]['width']=	root.findall("./section[@name='Car']/attnum[@name='overall width']")[0].attrib['unit'] +" "+ root.findall("./section[@name='Car']/attnum[@name='overall width']")[0].attrib['val']
+		except:
+			cars[carId]['width']= "data unavailable"
+		try:
+			cars[carId]['lenght']=	root.findall("./section[@name='Car']/attnum[@name='overall length']")[0].attrib['unit'] +" "+ root.findall("./section[@name='Car']/attnum[@name='overall length']")[0].attrib['val']
+		except:
+			cars[carId]['lenght']= "data unavailable"
+		try:
+			 cars[carId]['mass']= root.findall("./section[@name='Car']/attnum[@name='mass']")[0].attrib['unit'] +" "+ root.findall("./section[@name='Car']/attnum[@name='mass']")[0].attrib['val']
+		except:
+			cars[carId]['mass']= "data unavailable"
+
 		#mpa11 musarasama has problems (missing some data)
 		try:
 			cars[carId]['fueltank']= root.findall("./section[@name='Car']/attnum[@name='fuel tank']")[0].attrib['unit'] +" "+ root.findall("./section[@name='Car']/attnum[@name='fuel tank']")[0].attrib['val']
@@ -116,7 +127,7 @@ for folder in carFolders:
 
 		cars[carId]['drivetrain']= root.findall("./section[@name='Drivetrain']/attstr[@name='type']")[0].attrib['val']
 
-		print 'Processed: '+carId+' : '+carName +' : '+carWidth
+		print ('Processed car: '+carId+' : '+carName +' : '+carWidth)
 
 ##============================
 ## EXTRACT TRACKS CATEGORY DATA
@@ -159,7 +170,7 @@ for category in trackCategoryFolders:
 						#print xmlFileUrl
 						
 						parser = ET.XMLParser()
-						parser._parser.UseForeignDTD(True)
+						#parser._parser.UseForeignDTD(True)
 						parser.entity['default-surfaces'] = u'\u00A0'
 						parser.entity['default-objects'] = u'\u00A0'
 						tree = ET.parse(xmlFileUrl, parser=parser)
@@ -173,10 +184,18 @@ for category in trackCategoryFolders:
 						trackCategory= root.findall("./section[@name='Header']/attstr[@name='category']")[0].attrib['val']
 						imgFileUrl= trackFolder+'outline.png'
 						
+						#we want to ignore development tracks
+						if (trackCategory=="development"):
+							print ('INFO: Ignoring track as is a development one for: '+trackId+' : '+trackName)
+							continue
+						
 						if os.path.isfile(imgFileUrl):
 							newImgUrl= './../img/tracks/'+track+'-outline.png'
 							trackImg= './img/tracks/'+track+'-outline.png'
 							shutil.copyfile(imgFileUrl, newImgUrl)
+						else:
+							print ('WARNING: No track image defined for: '+trackId+' : '+trackName)
+							trackImg='';
 							
 						#populate the car object with all the infos of the track
 						tracks[trackId]={}
@@ -188,12 +207,13 @@ for category in trackCategoryFolders:
 						
 						tracks[trackId]['author']=		root.findall("./section[@name='Header']/attstr[@name='author']")[0].attrib['val']
 						temp =	root.findall("./section[@name='Header']/attstr[@name='description']")[0].attrib['val'].replace("'","*")
-						tracks[trackId]['description'] = temp.encode('ascii','replace')
+						tracks[trackId]['description'] = temp
+						#tracks[trackId]['description'] = temp.encode('ascii','replace')
 						#tracks[trackId]['version']=		root.findall("./section[@name='Header']/attstr[@name='version']")[0].attrib['val']
 						#
 						trackCategories[category]['tracks'].append(trackId)
 
-						print 'Processed: '+trackId+' : '+trackName
+						print ('Processed track: '+trackId+' : '+trackName)
 
 
 #save he carCategory info into a file
