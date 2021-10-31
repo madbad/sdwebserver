@@ -1027,7 +1027,7 @@ foreach ($xml->request as $requestype => $requestdata){
 
 					$msg0 =  $messagges->addChild('attstr');
 					$msg0->addAttribute('name','message0');	
-					$msg0->addAttribute('val',"Succesfull logged in as\n\n".$user['username']);						
+					$msg0->addAttribute('val',"Succesfull logged in as\n\n".$user['username']);
 					/*
 					echo '<?xml version="1.0" encoding="UTF-8"?>
 					<params name="webServerReply">
@@ -1067,6 +1067,11 @@ foreach ($xml->request as $requestype => $requestdata){
 
 					*/
 				}else{
+					
+					//xml
+					$login =  $reply->addChild('section');
+					$login->addAttribute('name','login');
+					
 					//xml messages
 					$messagges =  $reply->addChild('section');
 					$messagges->addAttribute('name','messages');
@@ -1077,7 +1082,7 @@ foreach ($xml->request as $requestype => $requestdata){
 
 					$msg0 =  $messagges->addChild('attstr');
 					$msg0->addAttribute('name','message0');	
-					$msg0->addAttribute('val',"FAILED to login in as\n\n".$requestdata->username."\n\nWrong username or password");							
+					$msg0->addAttribute('val',"FAILED to login in as\n\n".$requestdata->username."\n\nWrong username or password");
 				}
 			//echo $result;
 
